@@ -1,1 +1,1 @@
-# Decentralized-ERC-20-Token-Exchange
+# Decentralized ERC-20 Token Exchange
