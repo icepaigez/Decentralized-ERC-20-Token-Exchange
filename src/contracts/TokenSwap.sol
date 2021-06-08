@@ -6,9 +6,10 @@ contract TokenSwap {
 	event Sent(address from, address to, uint amount);
 
 	//2. transfer ether  to another account from one account
-	function transferEthToBuyer(address _buyer, uint _amount) public {
-		require(msg.sender.balance >= _amount);
-		payable(_buyer).transfer(_amount);
-		emit Sent(msg.sender, _buyer, _amount);
+	function transferEthToBuyer(address _buyer) public payable {
+		require(msg.sender.balance >= msg.value);
+		payable(_buyer).transfer(msg.value);
+		emit Sent(msg.sender, _buyer, msg.value);
 	}
 }
+
