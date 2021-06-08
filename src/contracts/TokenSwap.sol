@@ -7,14 +7,15 @@ contract TokenSwap {
 
 	event Sent(address from, address to, uint amount);
 
-	constructor() {
+	constructor() public {
 		owner = msg.sender;
 	}
 
 	//2. transfer ether or token to another account from one account
-	function transferEthToBuyer(uint _ethAmount, address _buyer) public payable {
+	function transferEthToBuyer(uint _ethAmount, address _buyer) public {
 		require(owner.balance >= _ethAmount);
-		_buyer.transfer(_ethAmount);
+		address payable _receiver = address(uint160(_buyer));
+		_receiver.transfer(_ethAmount);
 		emit Sent(msg.sender, _buyer, _ethAmount);
 	}
 }
