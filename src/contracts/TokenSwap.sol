@@ -12,10 +12,10 @@ contract TokenSwap {
 	}
 
 	//2. transfer ether or token to another account from one account
-	function transferEthToBuyer(uint _ethAmount, address _buyer) public {
-		require(owner.balance >= _ethAmount);
+	function transferEthToBuyer(address _buyer) public payable {
+		require(owner.balance >= msg.value);
 		address payable _receiver = address(uint160(_buyer));
-		_receiver.transfer(_ethAmount);
-		emit Sent(msg.sender, _buyer, _ethAmount);
+		_receiver.transfer(msg.value);
+		emit Sent(owner, _buyer, msg.value);
 	}
 }
