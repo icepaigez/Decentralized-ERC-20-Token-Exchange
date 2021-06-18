@@ -1,4 +1,4 @@
-pragma solidity ^0.5.0;
+pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
@@ -12,24 +12,23 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 contract TokenSwap {
 	string public name = "TokenSwap DEX";
-	uint public tradeFee = 0.003; 
-
+	
 	IERC20 token;
 
-	mapping (address => uint) public liquidity;
+	mapping (address => uint256) public liquidity;
 
-	event PreLiquidAdded(uint ethBalance, uint tokenBalance);
-	event PostLiquidAdded(address sender, uint ethAmount, uint tokenAmount, uint ethBalance, uint tokenBalance);
+	event PreLiquidAdded(uint256 ethBalance, uint256 tokenBalance);
+	event PostLiquidAdded(address sender, uint256 ethAmount, uint256 tokenAmount, uint256 ethBalance, uint256 tokenBalance);
 
-	constructor(address _tokenAddress) public {
+	constructor(address _tokenAddress) {
 		token = IERC20(_tokenAddress);
 	}
 
-	function addEthLiquid(uint _tokenAmount) public payable {
+	function addEthLiquid(uint256 _tokenAmount) public payable {
 		require(token.balanceOf(msg.sender) >= _tokenAmount);
-		require(msg.value == _tokenAmount);
-		uint tokenLiquidity = token.balanceOf(address(this));
-		uint ethLiquidity = address(this).balance;
+		// require(msg.value == _tokenAmount);
+		uint256 tokenLiquidity = token.balanceOf(address(this));
+		uint256 ethLiquidity = address(this).balance;
 		emit PreLiquidAdded(ethLiquidity, tokenLiquidity);
 		token.transferFrom(msg.sender, address(this), _tokenAmount);
 		liquidity[msg.sender] = _tokenAmount;
