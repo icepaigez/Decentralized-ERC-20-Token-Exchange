@@ -30,7 +30,7 @@ contract TokenSwap {
 		uint256 ethLiquidity = payable(address(this)).balance;
 		emit PreLiquidAdded(ethLiquidity, tokenLiquidity);
 		token.transferFrom(msg.sender, address(this), _tokenAmount);
-		liquidity[msg.sender] = _tokenAmount;
+		liquidity[msg.sender] = _tokenAmount + msg.value;
 		emit PostLiquidAdded(msg.sender, msg.value, _tokenAmount, ethLiquidity, tokenLiquidity);
 	}
 }
