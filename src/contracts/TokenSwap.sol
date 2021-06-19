@@ -4,6 +4,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 //todos
 //create liquidity pool that has eth in the pair
+//call a function to issue out LP token based on the provider's pool ownership
 //create liquidity pool without eth in the pair
 //estimate price of doing a trade
 //perform a trade
@@ -25,7 +26,6 @@ contract TokenSwap {
 	}
 
 	function addEthLiquid(uint256 _tokenAmount) public payable {
-		// require(msg.value == _tokenAmount);
 		uint256 tokenLiquidity = token.balanceOf(address(this));
 		uint256 ethLiquidity = payable(address(this)).balance;
 		emit PreLiquidAdded(ethLiquidity, tokenLiquidity);
@@ -37,5 +37,3 @@ contract TokenSwap {
 
 
 
-//1,000,000, 000,000,000, 000,000,000
-//3000000000000000000
