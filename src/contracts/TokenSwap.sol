@@ -12,7 +12,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 contract TokenSwap {
 	string public name = "TokenSwap DEX";
-	
+
 	IERC20 token;
 
 	mapping (address => uint256) public liquidity;
@@ -25,10 +25,9 @@ contract TokenSwap {
 	}
 
 	function addEthLiquid(uint256 _tokenAmount) public payable {
-		require(token.balanceOf(msg.sender) >= _tokenAmount);
 		// require(msg.value == _tokenAmount);
 		uint256 tokenLiquidity = token.balanceOf(address(this));
-		uint256 ethLiquidity = address(this).balance;
+		uint256 ethLiquidity = payable(address(this)).balance;
 		emit PreLiquidAdded(ethLiquidity, tokenLiquidity);
 		token.transferFrom(msg.sender, address(this), _tokenAmount);
 		liquidity[msg.sender] = _tokenAmount;
@@ -37,3 +36,6 @@ contract TokenSwap {
 }
 
 
+
+//1,000,000, 000,000,000, 000,000,000
+//3000000000000000000

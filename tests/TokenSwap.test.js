@@ -10,4 +10,4 @@ contract("TokenSwap", accounts => {
 	before(async() => {
 		contract = await TokenSwap.deployed();
 	})
-})
+}) 
