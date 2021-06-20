@@ -13,6 +13,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 contract TokenSwap {
 	string public name = "TokenSwap DEX";
+	uint256 public dexLiquidity;
 
 	IERC20 token;
 
@@ -31,6 +32,7 @@ contract TokenSwap {
 		emit PreLiquidAdded(ethLiquidity, tokenLiquidity);
 		token.transferFrom(msg.sender, address(this), _tokenAmount);
 		liquidity[msg.sender] = _tokenAmount + msg.value;
+		dexLiquidity = tokenLiquidity + ethLiquidity;
 		emit PostLiquidAdded(msg.sender, msg.value, _tokenAmount, ethLiquidity, tokenLiquidity);
 	}
 }
