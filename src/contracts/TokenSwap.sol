@@ -26,6 +26,11 @@ contract TokenSwap {
 		token = IERC20(_tokenAddress);
 	}
 
+	// function issueLPToken() public {
+	// 	//compare liquidity provided to total dex liquidity and issue 
+	// 	//lptoken for that %
+	// }
+
 	function addEthLiquid(uint256 _tokenAmount) public payable {
 		uint256 tokenLiquidity = token.balanceOf(address(this));
 		uint256 ethLiquidity = payable(address(this)).balance;
