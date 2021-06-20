@@ -32,7 +32,7 @@ contract TokenSwap {
 		emit PreLiquidAdded(ethLiquidity, tokenLiquidity);
 		token.transferFrom(msg.sender, address(this), _tokenAmount);
 		liquidity[msg.sender] = _tokenAmount + msg.value;
-		dexLiquidity = tokenLiquidity + ethLiquidity;
+		dexLiquidity += liquidity[msg.sender];
 		emit PostLiquidAdded(msg.sender, msg.value, _tokenAmount, ethLiquidity, tokenLiquidity);
 	}
 }

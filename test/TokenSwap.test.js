@@ -50,10 +50,9 @@ contract("TokenSwap", accounts => {
 			let dexTokenBalance = await token1.balanceOf(dex.address);
 			let lpBalance = await dex.liquidity(accounts[0]);
 			let dexBalance = await dex.dexLiquidity();
-			console.log(dexBalance.toString())
 
 			assert.equal(lpBalance, tokens("2.5"));
-			//assert.equal(dexBalance.toString(), tokens("2.5"));
+			assert.equal(dexBalance.toString(), tokens("2.5"));
 			assert.equal(lpTokenBalance, tokens("999999"));
 			assert.equal(dexEthBalance, tokens("1.5"));
 			assert.equal(dexTokenBalance, tokens("1"));
