@@ -16,29 +16,30 @@ contract TokenSwap {
 	uint256 public dexLiquidity;
 
 	IERC20 token;
+	IERC20 lptoken;
 
+	address[] public liquidityProviders;
 	mapping (address => uint256) public liquidity;
+	mapping (address => uint256) public lptokenOwn;
 
-	event PreLiquidAdded(uint256 ethBalance, uint256 tokenBalance);
-	event PostLiquidAdded(address sender, uint256 ethAmount, uint256 tokenAmount, uint256 ethBalance, uint256 tokenBalance);
+	event LiquidAdded(address sender, uint256 liquidAmount, uint256 dexAmount);
 
-	constructor(address _tokenAddress) {
+	constructor(address _tokenAddress, address _lptokenAddress) {
 		token = IERC20(_tokenAddress);
+		lptoken = IERC20(_lptokenAddress);
 	}
 
-	// function issueLPToken() public {
-	// 	//compare liquidity provided to total dex liquidity and issue 
-	// 	//lptoken for that %
-	// }
+	function issueLPToken(address _provider, uint256 _lptAmount) public {
+		lptokenOwn[_provider] = _lptAmount;
+	}
 
 	function addEthLiquid(uint256 _tokenAmount) public payable {
-		uint256 tokenLiquidity = token.balanceOf(address(this));
-		uint256 ethLiquidity = payable(address(this)).balance;
-		emit PreLiquidAdded(ethLiquidity, tokenLiquidity);
+		require(_tokenAmount > 0);
 		token.transferFrom(msg.sender, address(this), _tokenAmount);
-		liquidity[msg.sender] = _tokenAmount + msg.value;
+		liquidity[msg.sender] += _tokenAmount + msg.value;
 		dexLiquidity += liquidity[msg.sender];
-		emit PostLiquidAdded(msg.sender, msg.value, _tokenAmount, ethLiquidity, tokenLiquidity);
+		liquidityProviders.push(msg.sender);
+		emit LiquidAdded(msg.sender, liquidity[msg.sender], dexLiquidity);
 	}
 }
 
