@@ -10,6 +10,7 @@ class App extends Component {
   constructor() {
     super()
     this.state = {
+      web3:{},
       connectedUser: "",
       userEthBalance: "0",
       dex:{},
@@ -22,6 +23,7 @@ class App extends Component {
   loadWeb3 = async () => {
     if (window.ethereum) {
       let web3 = await new Web3(Web3.givenProvider);
+      this.setState({ web3 })
       await this.loadBlockchainData(web3)
     } else {
       alert('You need to install a blockchain wallet')
@@ -67,21 +69,30 @@ class App extends Component {
     }
   }
 
-  provideLiquidity = async() => {
-    const { dex, dapp, lpt, dexAddress } = this.state;
+  provideLiquidity = async(tokenQuantity, ethQuantity) => {
+    const { dex, dapp, lpt, dexAddress, connectedUser, web3 } = this.state;
     //check the pair names if this pair exist to determine which function to call
-    //console.log(dex.methods.pairs().call())
-
-    //const tb = await lpt.methods.balanceOf(dexAddress).call()
-    // const syma = await dapp.methods.symbol().call();
-    // const symb = await lpt.methods.symbol().call();
-    // console.log(`${syma}-${symb}`)
+    const currentPairsArray = await dex.methods.returnPairs().call()
+    if (currentPairsArray.length === 0) {
+      const approve = await dapp.methods.approve(dexAddress, web3.utils.toWei(tokenQuantity, 'ether')).send({from:connectedUser})
+      const { status } = approve;
+      if (status) {
+        const tokenSymbol = await dapp.methods.symbol().call();
+        const provide = await dex.methods.initEthPair(web3.utils.toWei(tokenQuantity, 'ether'), `${tokenSymbol}-ETH`).send({from:connectedUser, value:web3.utils.toWei(ethQuantity)})
+        if (provide.status) {
+          console.log('issue lp tokens')
+        }
+      }
+    } else {
+      //there are existing pairs; check if this pair already exists
+      console.log(currentPairsArray)
+    }
 
   }
 
   async componentDidMount() {
     await this.loadWeb3()
-    await this.provideLiquidity()
+    await this.provideLiquidity('2', '1.5')
   }
 
   render() {
