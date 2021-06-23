@@ -23,8 +23,6 @@ contract TokenSwap {
 	mapping (address => uint256) public liquidity;
 	mapping (address => uint256) public lptokenOwn;
 
-	// event LiquidAdded(address sender, uint256 liquidAmount, uint256 dexAmount);
-
 	constructor(address _tokenAddress, address _lptokenAddress) {
 		token = IERC20(_tokenAddress);
 		lptoken = IERC20(_lptokenAddress);
@@ -45,7 +43,6 @@ contract TokenSwap {
 		dexLiquidity += liquidity[msg.sender];
 		liquidityProviders.push(msg.sender);
 		pairs.push(_pairName);
-		// emit LiquidAdded(msg.sender, liquidity[msg.sender], dexLiquidity);
 	}
 }
 

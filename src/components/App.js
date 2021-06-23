@@ -71,6 +71,8 @@ class App extends Component {
 
   provideLiquidity = async(tokenQuantity, ethQuantity) => {
     const { dex, dapp, lpt, dexAddress, connectedUser, web3 } = this.state;
+    const lptokensBalance = await lpt.methods.balanceOf(dexAddress).call()
+
     //check the pair names if this pair exist to determine which function to call
     const currentPairsArray = await dex.methods.returnPairs().call()
     if (currentPairsArray.length === 0) {
@@ -80,7 +82,7 @@ class App extends Component {
         const tokenSymbol = await dapp.methods.symbol().call();
         const provide = await dex.methods.initEthPair(web3.utils.toWei(tokenQuantity, 'ether'), `${tokenSymbol}-ETH`).send({from:connectedUser, value:web3.utils.toWei(ethQuantity)})
         if (provide.status) {
-          console.log('issue lp tokens')
+          await dex.methods.issueLPToken(connectedUser, lptokensBalance).send({from:connectedUser})
         }
       }
     } else {
