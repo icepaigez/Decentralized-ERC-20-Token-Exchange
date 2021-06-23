@@ -69,8 +69,14 @@ class App extends Component {
 
   provideLiquidity = async() => {
     const { dex, dapp, lpt, dexAddress } = this.state;
-    const tb = await lpt.methods.balanceOf(dexAddress).call()
-    console.log(tb)
+    //check the pair names if this pair exist to determine which function to call
+    
+
+    //const tb = await lpt.methods.balanceOf(dexAddress).call()
+    // const syma = await dapp.methods.symbol().call();
+    // const symb = await lpt.methods.symbol().call();
+    // console.log(`${syma}-${symb}`)
+
   }
 
   async componentDidMount() {

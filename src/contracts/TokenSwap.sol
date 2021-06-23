@@ -19,6 +19,7 @@ contract TokenSwap {
 	IERC20 lptoken;
 
 	address[] public liquidityProviders;
+	string[] public pairs;
 	mapping (address => uint256) public liquidity;
 	mapping (address => uint256) public lptokenOwn;
 
@@ -33,15 +34,17 @@ contract TokenSwap {
 		lptokenOwn[_provider] = _lptAmount;
 	}
 
-	function addEthLiquid(uint256 _tokenAmount) public payable {
+	function initEthPair(uint256 _tokenAmount, string memory _pairName) public payable {
 		require(_tokenAmount > 0);
 		token.transferFrom(msg.sender, address(this), _tokenAmount);
 		liquidity[msg.sender] += _tokenAmount + msg.value;
 		dexLiquidity += liquidity[msg.sender];
 		liquidityProviders.push(msg.sender);
+		pairs.push(_pairName);
 		emit LiquidAdded(msg.sender, liquidity[msg.sender], dexLiquidity);
 	}
 }
+
 
 
 
