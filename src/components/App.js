@@ -1,49 +1,43 @@
 import React, { Component } from 'react';
-//import logo from '../logo.png';
+import Web3 from 'web3';
 import './App.css';
 
 class App extends Component {
+
+  constructor() {
+    super()
+    this.state = {
+      connectedUser: "",
+      userEthBalance: "0"
+    }
+  }
+
+  loadWeb3 = async () => {
+    if (window.ethereum) {
+      let web3 = await new Web3(Web3.givenProvider);
+      await this.loadBlockchainData(web3)
+    } else {
+      alert('You need to install a blockchain wallet')
+    }
+  }
+
+  loadBlockchainData = async (web3) => {
+    const accounts = await web3.eth.getAccounts()
+    this.setState({
+      connectedUser: accounts[0]
+    })
+    const userEthBalance = await web3.eth.getBalance(this.state.connectedUser)
+    this.setState({userEthBalance})
+  }
+
+  async componentDidMount() {
+    await this.loadWeb3()
+  }
+
   render() {
     return (
       <div>
         <h1>ERC20 Dex</h1>
-        {/*<nav className="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
-          <a
-            className="navbar-brand col-sm-3 col-md-2 mr-0"
-            href="http://www.dappuniversity.com/bootcamp"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Dapp University
-          </a>
-        </nav>
-        <div className="container-fluid mt-5">
-          <div className="row">
-            <main role="main" className="col-lg-12 d-flex text-center">
-              <div className="content mr-auto ml-auto">
-                <a
-                  href="http://www.dappuniversity.com/bootcamp"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <img src={logo} className="App-logo" alt="logo" />
-                </a>
-                <h1>Dapp University Starter Kit</h1>
-                <p>
-                  Edit <code>src/components/App.js</code> and save to reload.
-                </p>
-                <a
-                  className="App-link"
-                  href="http://www.dappuniversity.com/bootcamp"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  LEARN BLOCKCHAIN <u><b>NOW! </b></u>
-                </a>
-              </div>
-            </main>
-          </div>
-        </div>*/}
       </div>
     );
   }
