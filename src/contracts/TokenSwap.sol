@@ -30,6 +30,10 @@ contract TokenSwap {
 		lptoken = IERC20(_lptokenAddress);
 	}
 
+	function returnPairs() public returns(string[] memory) {
+		return pairs;
+	}
+
 	function issueLPToken(address _provider, uint256 _lptAmount) public {
 		lptokenOwn[_provider] = _lptAmount;
 	}

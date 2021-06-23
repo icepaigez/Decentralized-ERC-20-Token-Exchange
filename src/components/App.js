@@ -70,7 +70,7 @@ class App extends Component {
   provideLiquidity = async() => {
     const { dex, dapp, lpt, dexAddress } = this.state;
     //check the pair names if this pair exist to determine which function to call
-    
+    //console.log(dex.methods.pairs().call())
 
     //const tb = await lpt.methods.balanceOf(dexAddress).call()
     // const syma = await dapp.methods.symbol().call();
