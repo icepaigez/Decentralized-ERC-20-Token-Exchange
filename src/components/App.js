@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
 import Web3 from 'web3';
+import DAppToken from '../abis/DAppToken.json';
+import LPToken from '../abis/LPToken.json';
+import TokenSwap from '../abis/TokenSwap.json';
 import './App.css';
 
 class App extends Component {
@@ -8,7 +11,11 @@ class App extends Component {
     super()
     this.state = {
       connectedUser: "",
-      userEthBalance: "0"
+      userEthBalance: "0",
+      dex:{},
+      dapp:{},
+      lpt:{},
+      dexAddress:""
     }
   }
 
@@ -27,11 +34,48 @@ class App extends Component {
       connectedUser: accounts[0]
     })
     const userEthBalance = await web3.eth.getBalance(this.state.connectedUser)
-    this.setState({userEthBalance})
+    this.setState({ userEthBalance })
+
+    //bring in the smart contracts in JS format
+    //Exchange contract
+    const dexAbi = TokenSwap.abi;
+    const networkId = await web3.eth.net.getId();
+    const dexData = TokenSwap.networks;
+    if (dexData[networkId] !== undefined) {
+       const dexAddress = dexData[networkId].address;
+       const dex = new web3.eth.Contract(dexAbi, dexAddress);
+       this.setState({ dex, dexAddress });
+    } else {
+      alert('Exchange Contract is not deployed to the detected network')
+    }
+    //token 1 contract
+    const dappAbi = DAppToken.abi;
+    const dappData = DAppToken.networks;
+    if (dappData[networkId] !== undefined) {
+      const dappAddress = dappData[networkId].address;
+      const dapp = new web3.eth.Contract(dappAbi, dappAddress);
+      this.setState({ dapp });
+    }
+
+    //token 2 contract
+    const lptAbi = LPToken.abi;
+    const lpData = LPToken.networks;
+    if (lpData[networkId] !== undefined) {
+      const lptAddress = lpData[networkId].address;
+      const lpt = new web3.eth.Contract(lptAbi, lptAddress);
+      this.setState({ lpt });
+    }
+  }
+
+  provideLiquidity = async() => {
+    const { dex, dapp, lpt, dexAddress } = this.state;
+    const tb = await lpt.methods.balanceOf(dexAddress).call()
+    console.log(tb)
   }
 
   async componentDidMount() {
     await this.loadWeb3()
+    await this.provideLiquidity()
   }
 
   render() {
