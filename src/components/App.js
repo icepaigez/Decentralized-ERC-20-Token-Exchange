@@ -71,50 +71,56 @@ class App extends Component {
 
   provideLiquidity = async(tokenQuantity, ethQuantity) => {
     const { dex, dapp, lpt, dexAddress, connectedUser, web3 } = this.state;
-    const lptokensBalance = await lpt.methods.balanceOf(dexAddress).call()
+    const lptokensBalance = await lpt.methods.balanceOf(dexAddress).call();
+    let providers = await dex.methods.returnProviders().call();
+    let dexLiquid = await dex.methods.dexLiquidity().call();
     let symb1 = 'ETH'
-
-    //TEST
-    let providers = await dex.methods.returnProviders().call()
-    console.log(providers)
-
-    //TEST
 
     //check the pair names if this pair exist to determine which function to call
     const currentPairsArray = await dex.methods.returnPairs().call()
-    // if (currentPairsArray.length === 0) {
-    //   const approve = await dapp.methods.approve(dexAddress, web3.utils.toWei(tokenQuantity, 'ether')).send({from:connectedUser})
-    //   const { status } = approve;
-    //   if (status) {
-    //     const tokenSymbol = await dapp.methods.symbol().call();
-    //     const provide = await dex.methods.initEthPair(web3.utils.toWei(tokenQuantity, 'ether'), `${tokenSymbol}-${symb1}`).send({from:connectedUser, value:web3.utils.toWei(ethQuantity)})
-    //     if (provide.status) {
-    //       //this needs to always reassign the new proportion of ownership 
-    //       await dex.methods.issueLPToken(connectedUser, lptokensBalance).send({from:connectedUser})
-    //     }
-    //   }
-    // } else {
-    //   //there are existing pairs; check if this pair already exists
-    //   let symb2 = await dapp.methods.symbol().call();
-    //   let splitPairs = currentPairsArray.map(pair => pair.split('-'));
-    //   splitPairs.forEach(async array => {
-    //     if (array.includes(symb1) && array.includes(symb2)) {
-    //       const approve = await dapp.methods.approve(dexAddress, web3.utils.toWei(tokenQuantity, 'ether')).send({from:connectedUser})
-    //       const { status } = approve;
-    //       if (status) {
-    //         const provide = await dex.methods.addEthPair(web3.utils.toWei(tokenQuantity, 'ether')).send({from:connectedUser, value:web3.utils.toWei(ethQuantity)})
-    //       }
-    //     } else {
-    //       console.log('create new pool')
-    //     }
-    //   })
-    // }
-
+    if (currentPairsArray.length === 0) {
+      const approve = await dapp.methods.approve(dexAddress, web3.utils.toWei(tokenQuantity, 'ether')).send({from:connectedUser})
+      const { status } = approve;
+      if (status) {
+        const tokenSymbol = await dapp.methods.symbol().call();
+        const provide = await dex.methods.initEthPair(web3.utils.toWei(tokenQuantity, 'ether'), `${tokenSymbol}-${symb1}`).send({from:connectedUser, value:web3.utils.toWei(ethQuantity)})
+        if (provide.status) {
+          //this needs to always reassign the new proportion of ownership 
+          providers.forEach(async address => {
+            let currentLiquidity = await dex.methods.liquidity(address).call();
+            let newLiquidity =  (currentLiquidity / dexLiquid) * lptokensBalance;
+            await dex.methods.issueLPToken(connectedUser, newLiquidity).send({from:connectedUser})
+          }) 
+        }
+      }
+    } else {
+      //there are existing pairs; check if this pair already exists
+      let symb2 = await dapp.methods.symbol().call();
+      let splitPairs = currentPairsArray.map(pair => pair.split('-'));
+      splitPairs.forEach(async array => {
+        if (array.includes(symb1) && array.includes(symb2)) {
+          const approve = await dapp.methods.approve(dexAddress, web3.utils.toWei(tokenQuantity, 'ether')).send({from:connectedUser})
+          const { status } = approve;
+          if (status) {
+            const provide = await dex.methods.addEthPair(web3.utils.toWei(tokenQuantity, 'ether')).send({from:connectedUser, value:web3.utils.toWei(ethQuantity)})
+            if (provide.status) {
+               providers.forEach(async address => {
+                let currentLiquidity = await dex.methods.liquidity(address).call();
+                let newLiquidity =  (currentLiquidity / dexLiquid) * lptokensBalance;
+                await dex.methods.issueLPToken(connectedUser, newLiquidity).send({from:connectedUser})
+              })
+            }
+          }
+        } else {
+          console.log('create new pool')
+        }
+      })
+    }
   }
 
   async componentDidMount() {
     await this.loadWeb3()
-    await this.provideLiquidity('2', '1.5')
+    //await this.provideLiquidity('2', '1.5')
   }
 
   render() {
