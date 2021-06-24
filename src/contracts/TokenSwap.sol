@@ -22,14 +22,19 @@ contract TokenSwap {
 	string[] public pairs;
 	mapping (address => uint256) public liquidity;
 	mapping (address => uint256) public lptokenOwn;
+	mapping (address => uint256) public providerIndex;
 
 	constructor(address _tokenAddress, address _lptokenAddress) {
 		token = IERC20(_tokenAddress);
 		lptoken = IERC20(_lptokenAddress);
 	}
 
-	function returnPairs() public returns(string[] memory) {
+	function returnPairs() public view returns(string[] memory) {
 		return pairs;
+	}
+
+	function returnProviders() public view returns(address[] memory) {
+		return liquidityProviders;
 	}
 
 	function issueLPToken(address _provider, uint256 _lptAmount) public {
@@ -42,8 +47,33 @@ contract TokenSwap {
 		liquidity[msg.sender] += _tokenAmount + msg.value;
 		dexLiquidity += liquidity[msg.sender];
 		liquidityProviders.push(msg.sender);
+		uint256 id = liquidityProviders.length - 1;
+		providerIndex[msg.sender] = id;
 		pairs.push(_pairName);
 	}
+
+	function addEthPair(uint256 _tokenAmount) public payable {
+		require(_tokenAmount > 0);
+		token.transferFrom(msg.sender, address(this), _tokenAmount);
+		liquidity[msg.sender] += _tokenAmount + msg.value;
+		dexLiquidity += liquidity[msg.sender];
+		if (providerIndex[msg.sender] < 0) {
+			liquidityProviders.push(msg.sender);
+			uint256 id = liquidityProviders.length - 1;
+			providerIndex[msg.sender] = id;
+		}
+	}
+
+	// function initTokenPair(uint256 _tokenAmount1, uint256 _tokenAmount2, string memory _pairName) public {
+	// 	require(_tokenAmount > 0);
+	// 	token.transferFrom(msg.sender, address(this), _tokenAmount2);
+	// 	liquidity[msg.sender] += _tokenAmount1 + _tokenAmount2;
+	// 	dexLiquidity += liquidity[msg.sender];
+	// 	liquidityProviders.push(msg.sender);
+	// 	uint256 id = liquidityProviders.length - 1;
+	// 	providerIndex[msg.sender] = id;
+	// 	pairs.push(_pairName);
+	// }
 }
 
 
