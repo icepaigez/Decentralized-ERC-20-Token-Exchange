@@ -70,7 +70,7 @@ class App extends Component {
     }
   }
 
-  provideLiquidity = async(tokenQuantity, ethQuantity) => {
+  provideETHPairLiquidity = async(tokenQuantity, ethQuantity) => {
     let { dex, dapp, lpt, dexAddress, connectedUser, web3 } = this.state;
     let lptokensBalance = await lpt.methods.balanceOf(dexAddress).call();
     lptokensBalance = web3.utils.fromWei(lptokensBalance, 'ether')
@@ -116,7 +116,20 @@ class App extends Component {
             }
           }
         } else {
-          console.log('create new pool')
+          const approve = await dapp.methods.approve(dexAddress, web3.utils.toWei(tokenQuantity, 'ether')).send({from:connectedUser})
+          const { status } = approve;
+          if (status) {
+            const provide = await dex.methods.initEthPair(web3.utils.toWei(tokenQuantity, 'ether'), `${symb2}-${symb1}`).send({from:connectedUser, value:web3.utils.toWei(ethQuantity)})
+            if (provide.status) {
+              let dexLiquid = await dex.methods.dexLiquidity().call();
+              let currentLiquidity = await dex.methods.liquidity(connectedUser).call();
+              currentLiquidity = web3.utils.fromWei(currentLiquidity, 'ether')
+              dexLiquid = web3.utils.fromWei(dexLiquid, 'ether')
+              let newLPTLiquidity =  (currentLiquidity / dexLiquid) * lptokensBalance;
+              newLPTLiquidity = web3.utils.toWei(String(newLPTLiquidity), 'ether')
+              await dex.methods.issueLPToken(connectedUser, newLPTLiquidity).send({from:connectedUser})
+            }
+          }
         }
       })
     }
