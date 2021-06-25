@@ -46,7 +46,7 @@ contract TokenSwap {
 		require(_tokenAmount > 0);
 		token.transferFrom(msg.sender, address(this), _tokenAmount);
 		liquidity[msg.sender] += _tokenAmount + msg.value;
-		dexLiquidity += liquidity[msg.sender];
+		dexLiquidity += _tokenAmount + msg.value;
 	}
 }
 

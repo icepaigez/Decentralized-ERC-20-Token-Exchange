@@ -70,4 +70,28 @@ contract("TokenSwap", accounts => {
 			assert.equal(tokenPortion, tokens("100"));
 		})
 	})
+
+	describe("Update an existing pool with Additional Liquidity", async() => {
+		let trf;
+		before(async() => {
+			await token1.approve(dex.address, tokens("1"), {from:accounts[0]});
+			trf = await dex.addEthPair(tokens("1"), {from:accounts[0], value:tokens("1.5")});
+		})
+
+		it('should accept new liquidity to an existing ETH/TOKEN Liquidity Pool', async() => {
+			let lpTokenBalance = await token1.balanceOf(accounts[0]);
+			let dexEthBalance = await web3.eth.getBalance(dex.address);
+			let dexTokenBalance = await token1.balanceOf(dex.address);
+			let lpBalance = await dex.liquidity(accounts[0]);
+			let dexBalance = await dex.dexLiquidity();
+			let pair = await dex.returnPairs();
+
+			assert.equal(lpBalance.toString(), tokens("5"));
+			assert.equal(dexBalance.toString(), tokens("5"));
+			assert.equal(lpTokenBalance, tokens("999998"));
+			assert.equal(dexEthBalance, tokens("3"));
+			assert.equal(dexTokenBalance, tokens("2"));
+			assert.equal(pair.length, 1);
+		})
+	})
 })  
