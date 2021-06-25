@@ -15,15 +15,17 @@ contract TokenSwap {
 	uint256 public dexLiquidity;
 
 	IERC20 token;
+	IERC20 token2;
 	IERC20 lptoken;
 
 	string[] public pairs;
 	mapping (address => uint256) public liquidity;
 	mapping (address => uint256) public lptokenOwn;
 
-	constructor(address _tokenAddress, address _lptokenAddress) {
+	constructor(address _tokenAddress, address _lptokenAddress, address _token2Address) {
 		token = IERC20(_tokenAddress);
 		lptoken = IERC20(_lptokenAddress);
+		token2 = IERC20(_token2Address);
 	}
 
 	function returnPairs() public view returns(string[] memory) {
