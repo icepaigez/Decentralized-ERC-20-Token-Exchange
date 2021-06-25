@@ -1,5 +1,6 @@
 const TokenSwap = artifacts.require("TokenSwap");
 const DAppToken = artifacts.require("DAppToken");
+const TeaToken = artifacts.require("TeaToken");
 
 require('chai')
   .use(require('chai-as-promised'))
@@ -10,10 +11,11 @@ function tokens(qty) {
 }
 
 contract("TokenSwap", accounts => {
-	let dex, token1;
+	let dex, token1, token2;
 	before(async() => {
-		token1 = await DAppToken.deployed()
-		dex = await TokenSwap.deployed(token1.address);
+		token1 = await DAppToken.deployed();
+		token2 = await TeaToken.deployed();
+		dex = await TokenSwap.deployed(token1.address, token2.address);
 	})
 
 	describe('TokenSwap DEX', async() => {
@@ -92,6 +94,31 @@ contract("TokenSwap", accounts => {
 			assert.equal(dexEthBalance, tokens("3"));
 			assert.equal(dexTokenBalance, tokens("2"));
 			assert.equal(pair.length, 1);
+		})
+	})
+
+	describe("Transfer Token-Token pair to the contract", async() => {
+		let poolName;
+		before(async() => {
+			let tok1Symbol = await token1.symbol();
+			let tok2Symbol = await token2.symbol();
+			poolName = `${tok1Symbol}-${tok2Symbol}`
+			await token1.approve(dex.address, tokens("1"), {from:accounts[0]});
+			await token2.approve(dex.address, tokens("1.2"), {from:accounts[0]});
+			await dex.initTokenPair(tokens("1"), tokens("1.2"), poolName, {from:accounts[0]});
+		})
+
+		it('should accept a pair that contains 2 ERC-20 Tokens', async() => {
+			let dexToken1Balance = await token1.balanceOf(dex.address);
+			let dexToken2Balance = await token2.balanceOf(dex.address);
+			let dexBalance = await dex.dexLiquidity();
+			let pair = await dex.returnPairs();
+
+			assert.equal(dexBalance.toString(), tokens("7.2"));
+			assert.equal(dexToken1Balance.toString(), tokens("3"));
+			assert.equal(dexToken2Balance.toString(), tokens("1.2"));
+			assert.equal(pair[1], poolName);
+			assert.equal(pair.length, 2);
 		})
 	})
 })  
