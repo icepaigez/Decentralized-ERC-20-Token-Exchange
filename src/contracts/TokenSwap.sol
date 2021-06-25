@@ -59,6 +59,14 @@ contract TokenSwap {
 		dexLiquidity += _token1Amount + _token2Amount;
 		pairs.push(_pairName);
 	}
+
+	function addTokenPair(uint256 _token1Amount, uint256 _token2Amount) public {
+		require(_token1Amount > 0 && _token2Amount > 0);
+		token.transferFrom(msg.sender, address(this), _token1Amount);
+		token2.transferFrom(msg.sender, address(this), _token2Amount);
+		liquidity[msg.sender] += _token1Amount + _token2Amount;
+		dexLiquidity += _token1Amount + _token2Amount;
+	}
 }
 
 
