@@ -22,7 +22,8 @@ class App extends Component {
 
   loadWeb3 = async () => {
     if (window.ethereum) {
-      let web3 = await new Web3(Web3.givenProvider);
+      let web3 = await new Web3(Web3.givenProvider || "http://localhost:7545");
+      await window.ethereum.request({ method: 'eth_requestAccounts' });
       this.setState({ web3 })
       await this.loadBlockchainData(web3)
     } else {
@@ -70,10 +71,9 @@ class App extends Component {
   }
 
   provideLiquidity = async(tokenQuantity, ethQuantity) => {
-    const { dex, dapp, lpt, dexAddress, connectedUser, web3 } = this.state;
-    const lptokensBalance = await lpt.methods.balanceOf(dexAddress).call();
-    let providers = await dex.methods.returnProviders().call();
-    let dexLiquid = await dex.methods.dexLiquidity().call();
+    let { dex, dapp, lpt, dexAddress, connectedUser, web3 } = this.state;
+    let lptokensBalance = await lpt.methods.balanceOf(dexAddress).call();
+    lptokensBalance = web3.utils.fromWei(lptokensBalance, 'ether')
     let symb1 = 'ETH'
 
     //check the pair names if this pair exist to determine which function to call
@@ -86,11 +86,13 @@ class App extends Component {
         const provide = await dex.methods.initEthPair(web3.utils.toWei(tokenQuantity, 'ether'), `${tokenSymbol}-${symb1}`).send({from:connectedUser, value:web3.utils.toWei(ethQuantity)})
         if (provide.status) {
           //this needs to always reassign the new proportion of ownership 
-          providers.forEach(async address => {
-            let currentLiquidity = await dex.methods.liquidity(address).call();
-            let newLiquidity =  (currentLiquidity / dexLiquid) * lptokensBalance;
-            await dex.methods.issueLPToken(connectedUser, newLiquidity).send({from:connectedUser})
-          }) 
+          let dexLiquid = await dex.methods.dexLiquidity().call();
+          let currentLiquidity = await dex.methods.liquidity(connectedUser).call();
+          currentLiquidity = web3.utils.fromWei(currentLiquidity, 'ether')
+          dexLiquid = web3.utils.fromWei(dexLiquid, 'ether')
+          let newLPTLiquidity =  (currentLiquidity / dexLiquid) * lptokensBalance;
+          newLPTLiquidity = web3.utils.toWei(String(newLPTLiquidity), 'ether')
+          await dex.methods.issueLPToken(connectedUser, newLPTLiquidity).send({from:connectedUser})
         }
       }
     } else {
@@ -104,11 +106,13 @@ class App extends Component {
           if (status) {
             const provide = await dex.methods.addEthPair(web3.utils.toWei(tokenQuantity, 'ether')).send({from:connectedUser, value:web3.utils.toWei(ethQuantity)})
             if (provide.status) {
-               providers.forEach(async address => {
-                let currentLiquidity = await dex.methods.liquidity(address).call();
-                let newLiquidity =  (currentLiquidity / dexLiquid) * lptokensBalance;
-                await dex.methods.issueLPToken(connectedUser, newLiquidity).send({from:connectedUser})
-              })
+              let dexLiquid = await dex.methods.dexLiquidity().call();
+              let currentLiquidity = await dex.methods.liquidity(connectedUser).call();
+              currentLiquidity = web3.utils.fromWei(currentLiquidity, 'ether')
+              dexLiquid = web3.utils.fromWei(dexLiquid, 'ether')
+              let newLPTLiquidity =  (currentLiquidity / dexLiquid) * lptokensBalance;
+              newLPTLiquidity = web3.utils.toWei(String(newLPTLiquidity), 'ether')
+              await dex.methods.issueLPToken(connectedUser, newLPTLiquidity).send({from:connectedUser})
             }
           }
         } else {
@@ -120,7 +124,7 @@ class App extends Component {
 
   async componentDidMount() {
     await this.loadWeb3()
-    //await this.provideLiquidity('2', '1.5')
+    //await this.provideLiquidity('1', '1.5')
   }
 
   render() {

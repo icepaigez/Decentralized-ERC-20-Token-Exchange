@@ -3,8 +3,7 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 //todos
-//create liquidity pool that has eth in the pair
-//call a function to issue out LP token based on the provider's pool ownership
+//function to issue out LP token based on the provider's pool ownership - in progress
 //create liquidity pool without eth in the pair
 //estimate price of doing a trade
 //perform a trade
@@ -18,11 +17,9 @@ contract TokenSwap {
 	IERC20 token;
 	IERC20 lptoken;
 
-	address[] public liquidityProviders;
 	string[] public pairs;
 	mapping (address => uint256) public liquidity;
 	mapping (address => uint256) public lptokenOwn;
-	mapping (address => uint256) public providerIndex;
 
 	constructor(address _tokenAddress, address _lptokenAddress) {
 		token = IERC20(_tokenAddress);
@@ -31,10 +28,6 @@ contract TokenSwap {
 
 	function returnPairs() public view returns(string[] memory) {
 		return pairs;
-	}
-
-	function returnProviders() public view returns(address[] memory) {
-		return liquidityProviders;
 	}
 
 	function issueLPToken(address _provider, uint256 _lptAmount) public {
@@ -46,9 +39,6 @@ contract TokenSwap {
 		token.transferFrom(msg.sender, address(this), _tokenAmount);
 		liquidity[msg.sender] += _tokenAmount + msg.value;
 		dexLiquidity += liquidity[msg.sender];
-		liquidityProviders.push(msg.sender);
-		uint256 id = liquidityProviders.length - 1;
-		providerIndex[msg.sender] = id;
 		pairs.push(_pairName);
 	}
 
@@ -57,23 +47,7 @@ contract TokenSwap {
 		token.transferFrom(msg.sender, address(this), _tokenAmount);
 		liquidity[msg.sender] += _tokenAmount + msg.value;
 		dexLiquidity += liquidity[msg.sender];
-		if (providerIndex[msg.sender] < 0) {
-			liquidityProviders.push(msg.sender);
-			uint256 id = liquidityProviders.length - 1;
-			providerIndex[msg.sender] = id;
-		}
 	}
-
-	// function initTokenPair(uint256 _tokenAmount1, uint256 _tokenAmount2, string memory _pairName) public {
-	// 	require(_tokenAmount > 0);
-	// 	token.transferFrom(msg.sender, address(this), _tokenAmount2);
-	// 	liquidity[msg.sender] += _tokenAmount1 + _tokenAmount2;
-	// 	dexLiquidity += liquidity[msg.sender];
-	// 	liquidityProviders.push(msg.sender);
-	// 	uint256 id = liquidityProviders.length - 1;
-	// 	providerIndex[msg.sender] = id;
-	// 	pairs.push(_pairName);
-	// }
 }
 
 
