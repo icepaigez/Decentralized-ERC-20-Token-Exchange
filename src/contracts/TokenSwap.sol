@@ -40,7 +40,7 @@ contract TokenSwap {
 		require(_tokenAmount > 0);
 		token.transferFrom(msg.sender, address(this), _tokenAmount);
 		liquidity[msg.sender] += _tokenAmount + msg.value;
-		dexLiquidity += liquidity[msg.sender];
+		dexLiquidity += _tokenAmount + msg.value;
 		pairs.push(_pairName);
 	}
 
@@ -49,6 +49,15 @@ contract TokenSwap {
 		token.transferFrom(msg.sender, address(this), _tokenAmount);
 		liquidity[msg.sender] += _tokenAmount + msg.value;
 		dexLiquidity += _tokenAmount + msg.value;
+	}
+
+	function initTokenPair(uint256 _token1Amount, uint256 _token2Amount, string memory _pairName) public {
+		require(_token1Amount > 0 && _token2Amount > 0);
+		token.transferFrom(msg.sender, address(this), _token1Amount);
+		token2.transferFrom(msg.sender, address(this), _token2Amount);
+		liquidity[msg.sender] += _token1Amount + _token2Amount;
+		dexLiquidity += _token1Amount + _token2Amount;
+		pairs.push(_pairName);
 	}
 }
 
