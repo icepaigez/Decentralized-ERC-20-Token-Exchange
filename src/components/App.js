@@ -88,61 +88,64 @@ class App extends Component {
     let symb1 = 'ETH'
 
     //check the pair names if this pair exist to determine which function to call
-    const currentPairsArray = await dex.methods.returnPairs().call()
+    let currentPairsArray = await dex.methods.returnPairs().call()
     if (currentPairsArray.length === 0) {
       const approve = await dapp.methods.approve(dexAddress, web3.utils.toWei(tokenQuantity, 'ether')).send({from:connectedUser})
       const { status } = approve;
       if (status) {
         const tokenSymbol = await dapp.methods.symbol().call();
-        const provide = await dex.methods.initEthPair(web3.utils.toWei(tokenQuantity, 'ether'), `${tokenSymbol}-${symb1}`).send({from:connectedUser, value:web3.utils.toWei(ethQuantity)})
+        const poolName = `${symb1}-${tokenSymbol}`
+        const provide = await dex.methods.initEthPair(web3.utils.toWei(tokenQuantity, 'ether'), poolName, symb1, tokenSymbol).send({from:connectedUser, value:web3.utils.toWei(ethQuantity)})
         if (provide.status) {
           //this needs to always reassign the new proportion of ownership 
-          let dexLiquid = await dex.methods.dexLiquidity().call();
-          let currentLiquidity = await dex.methods.liquidity(connectedUser).call();
+          let totalPools = await dex.methods.returnPairs().call();
+          totalPools = String(totalPools.length);
+          let poolLiquidity = await dex.methods.pool(poolName).call();
+          let currentLiquidity = await dex.methods.poolLiquidity(connectedUser, poolName).call();
           currentLiquidity = web3.utils.fromWei(currentLiquidity, 'ether')
-          dexLiquid = web3.utils.fromWei(dexLiquid, 'ether')
-          let newLPTLiquidity =  (currentLiquidity / dexLiquid) * lptokensBalance;
-          newLPTLiquidity = web3.utils.toWei(String(newLPTLiquidity), 'ether')
-          await dex.methods.issueLPToken(connectedUser, newLPTLiquidity).send({from:connectedUser})
+          poolLiquidity = web3.utils.fromWei(poolLiquidity, 'ether')
+          let lptokenIssued =  (currentLiquidity / poolLiquidity) * (lptokensBalance / totalPools);
+          lptokenIssued = web3.utils.toWei(String(lptokenIssued), 'ether')
+          await dex.methods.issueLPToken(connectedUser, lptokenIssued, poolName).send({from:connectedUser})
         }
       }
     } else {
       //there are existing pairs; check if this pair already exists
       let symb2 = await dapp.methods.symbol().call();
-      let splitPairs = currentPairsArray.map(pair => pair.split('-'));
-      splitPairs.forEach(async array => {
-        if (array.includes(symb1) && array.includes(symb2)) {
-          const approve = await dapp.methods.approve(dexAddress, web3.utils.toWei(tokenQuantity, 'ether')).send({from:connectedUser})
-          const { status } = approve;
-          if (status) {
-            const provide = await dex.methods.addEthPair(web3.utils.toWei(tokenQuantity, 'ether')).send({from:connectedUser, value:web3.utils.toWei(ethQuantity)})
-            if (provide.status) {
-              let dexLiquid = await dex.methods.dexLiquidity().call();
-              let currentLiquidity = await dex.methods.liquidity(connectedUser).call();
-              currentLiquidity = web3.utils.fromWei(currentLiquidity, 'ether')
-              dexLiquid = web3.utils.fromWei(dexLiquid, 'ether')
-              let newLPTLiquidity =  (currentLiquidity / dexLiquid) * lptokensBalance;
-              newLPTLiquidity = web3.utils.toWei(String(newLPTLiquidity), 'ether')
-              await dex.methods.issueLPToken(connectedUser, newLPTLiquidity).send({from:connectedUser})
-            }
-          }
-        } else {
-          const approve = await dapp.methods.approve(dexAddress, web3.utils.toWei(tokenQuantity, 'ether')).send({from:connectedUser})
-          const { status } = approve;
-          if (status) {
-            const provide = await dex.methods.initEthPair(web3.utils.toWei(tokenQuantity, 'ether'), `${symb2}-${symb1}`).send({from:connectedUser, value:web3.utils.toWei(ethQuantity)})
-            if (provide.status) {
-              let dexLiquid = await dex.methods.dexLiquidity().call();
-              let currentLiquidity = await dex.methods.liquidity(connectedUser).call();
-              currentLiquidity = web3.utils.fromWei(currentLiquidity, 'ether')
-              dexLiquid = web3.utils.fromWei(dexLiquid, 'ether')
-              let newLPTLiquidity =  (currentLiquidity / dexLiquid) * lptokensBalance;
-              newLPTLiquidity = web3.utils.toWei(String(newLPTLiquidity), 'ether')
-              await dex.methods.issueLPToken(connectedUser, newLPTLiquidity).send({from:connectedUser})
-            }
-          }
-        }
-      })
+      // let splitPairs = currentPairsArray.map(pair => pair.split('-'));
+      // splitPairs.forEach(async array => {
+      //   if (array.includes(symb1) && array.includes(symb2)) {
+      //     const approve = await dapp.methods.approve(dexAddress, web3.utils.toWei(tokenQuantity, 'ether')).send({from:connectedUser})
+      //     const { status } = approve;
+      //     if (status) {
+      //       const provide = await dex.methods.addEthPair(web3.utils.toWei(tokenQuantity, 'ether')).send({from:connectedUser, value:web3.utils.toWei(ethQuantity)})
+      //       if (provide.status) {
+      //         let dexLiquid = await dex.methods.dexLiquidity().call();
+      //         let currentLiquidity = await dex.methods.liquidity(connectedUser).call();
+      //         currentLiquidity = web3.utils.fromWei(currentLiquidity, 'ether')
+      //         dexLiquid = web3.utils.fromWei(dexLiquid, 'ether')
+      //         let newLPTLiquidity =  (currentLiquidity / dexLiquid) * lptokensBalance;
+      //         newLPTLiquidity = web3.utils.toWei(String(newLPTLiquidity), 'ether')
+      //         await dex.methods.issueLPToken(connectedUser, newLPTLiquidity).send({from:connectedUser})
+      //       }
+      //     }
+      //   } else {
+      //     const approve = await dapp.methods.approve(dexAddress, web3.utils.toWei(tokenQuantity, 'ether')).send({from:connectedUser})
+      //     const { status } = approve;
+      //     if (status) {
+      //       const provide = await dex.methods.initEthPair(web3.utils.toWei(tokenQuantity, 'ether'), `${symb2}-${symb1}`).send({from:connectedUser, value:web3.utils.toWei(ethQuantity)})
+      //       if (provide.status) {
+      //         let dexLiquid = await dex.methods.dexLiquidity().call();
+      //         let currentLiquidity = await dex.methods.liquidity(connectedUser).call();
+      //         currentLiquidity = web3.utils.fromWei(currentLiquidity, 'ether')
+      //         dexLiquid = web3.utils.fromWei(dexLiquid, 'ether')
+      //         let newLPTLiquidity =  (currentLiquidity / dexLiquid) * lptokensBalance;
+      //         newLPTLiquidity = web3.utils.toWei(String(newLPTLiquidity), 'ether')
+      //         await dex.methods.issueLPToken(connectedUser, newLPTLiquidity).send({from:connectedUser})
+      //       }
+      //     }
+      //   }
+      // })
     }
   }
 
@@ -212,7 +215,7 @@ class App extends Component {
 
   async componentDidMount() {
     await this.loadWeb3()
-    //await this.provideTokenPairLiquidity('1', '1.5')
+    //await this.provideETHPairLiquidity('1', '1.5')
   }
 
   render() {

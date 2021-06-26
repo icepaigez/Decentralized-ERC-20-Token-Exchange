@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 //todos
-//function to issue out LP token based on the provider's pool ownership - in progress
+//function to issue out LP token based on the provider's pool ownership 
 //create liquidity pool without eth in the pair
 //estimate price of doing a trade
 //perform a trade
@@ -20,7 +20,8 @@ contract TokenSwap {
 
 	string[] public pairs;
 	mapping (address => uint256) public liquidity;
-	mapping (address => uint256) public lptokenOwn;
+	mapping (address => mapping (string => uint256)) public poolLiquidity;
+	mapping (address => mapping (string => uint256)) public lptokenOwned;
 	mapping (string => uint256) public pool; //ETH-DApp: "500"
 	mapping (string => mapping (string => uint256)) public poolPair; //ETH-DApp[ETH]:100, ETH-DApp[DApp]:400 
 
@@ -34,8 +35,8 @@ contract TokenSwap {
 		return pairs;
 	}
 
-	function issueLPToken(address _provider, uint256 _lptAmount) public {
-		lptokenOwn[_provider] = _lptAmount;
+	function issueLPToken(address _provider, uint256 _lptAmount, string memory _pairName) public {
+		lptokenOwned[_provider][_pairName] = _lptAmount;
 	}
 
 	function initEthPair(uint256 _tokenAmount, string memory _pairName, string memory _pair1, string memory _pair2) public payable {
@@ -44,6 +45,7 @@ contract TokenSwap {
 		liquidity[msg.sender] += _tokenAmount + msg.value;
 		dexLiquidity += _tokenAmount + msg.value;
 		pool[_pairName] += _tokenAmount + msg.value;
+		poolLiquidity[msg.sender][_pairName] += _tokenAmount + msg.value;
 		poolPair[_pairName][_pair1] += msg.value;
 		poolPair[_pairName][_pair2] += _tokenAmount;
 		pairs.push(_pairName);
@@ -55,6 +57,7 @@ contract TokenSwap {
 		liquidity[msg.sender] += _tokenAmount + msg.value;
 		dexLiquidity += _tokenAmount + msg.value;
 		pool[_pairName] += _tokenAmount + msg.value;
+		poolLiquidity[msg.sender][_pairName] += _tokenAmount + msg.value;
 		poolPair[_pairName][_pair1] += msg.value;
 		poolPair[_pairName][_pair2] += _tokenAmount;
 	}
@@ -66,6 +69,7 @@ contract TokenSwap {
 		liquidity[msg.sender] += _token1Amount + _token2Amount;
 		dexLiquidity += _token1Amount + _token2Amount;
 		pool[_pairName] += _token1Amount + _token2Amount;
+		poolLiquidity[msg.sender][_pairName] += _token1Amount + _token2Amount;
 		poolPair[_pairName][_pair1] += _token1Amount;
 		poolPair[_pairName][_pair2] += _token2Amount;
 		pairs.push(_pairName);
@@ -78,6 +82,7 @@ contract TokenSwap {
 		liquidity[msg.sender] += _token1Amount + _token2Amount;
 		dexLiquidity += _token1Amount + _token2Amount;
 		pool[_pairName] += _token1Amount + _token2Amount;
+		poolLiquidity[msg.sender][_pairName] += _token1Amount + _token2Amount;
 		poolPair[_pairName][_pair1] += _token1Amount;
 		poolPair[_pairName][_pair2] += _token2Amount;
 	}
