@@ -21,6 +21,8 @@ contract TokenSwap {
 	string[] public pairs;
 	mapping (address => uint256) public liquidity;
 	mapping (address => uint256) public lptokenOwn;
+	mapping (string => uint256) public pool; //ETH-DApp: "500"
+	mapping (string => mapping (string => uint256)) public poolPair; //ETH-DApp[ETH]:100, ETH-DApp[DApp]:400 
 
 	constructor(address _tokenAddress, address _lptokenAddress, address _token2Address) {
 		token = IERC20(_tokenAddress);
@@ -36,36 +38,48 @@ contract TokenSwap {
 		lptokenOwn[_provider] = _lptAmount;
 	}
 
-	function initEthPair(uint256 _tokenAmount, string memory _pairName) public payable {
+	function initEthPair(uint256 _tokenAmount, string memory _pairName, string memory _pair1, string memory _pair2) public payable {
 		require(_tokenAmount > 0);
 		token.transferFrom(msg.sender, address(this), _tokenAmount);
 		liquidity[msg.sender] += _tokenAmount + msg.value;
 		dexLiquidity += _tokenAmount + msg.value;
+		pool[_pairName] += _tokenAmount + msg.value;
+		poolPair[_pairName][_pair1] += msg.value;
+		poolPair[_pairName][_pair2] += _tokenAmount;
 		pairs.push(_pairName);
 	}
 
-	function addEthPair(uint256 _tokenAmount) public payable {
+	function addEthPair(uint256 _tokenAmount, string memory _pairName, string memory _pair1, string memory _pair2) public payable {
 		require(_tokenAmount > 0);
 		token.transferFrom(msg.sender, address(this), _tokenAmount);
 		liquidity[msg.sender] += _tokenAmount + msg.value;
 		dexLiquidity += _tokenAmount + msg.value;
+		pool[_pairName] += _tokenAmount + msg.value;
+		poolPair[_pairName][_pair1] += msg.value;
+		poolPair[_pairName][_pair2] += _tokenAmount;
 	}
 
-	function initTokenPair(uint256 _token1Amount, uint256 _token2Amount, string memory _pairName) public {
+	function initTokenPair(uint256 _token1Amount, uint256 _token2Amount, string memory _pairName, string memory _pair1, string memory _pair2) public {
 		require(_token1Amount > 0 && _token2Amount > 0);
 		token.transferFrom(msg.sender, address(this), _token1Amount);
 		token2.transferFrom(msg.sender, address(this), _token2Amount);
 		liquidity[msg.sender] += _token1Amount + _token2Amount;
 		dexLiquidity += _token1Amount + _token2Amount;
+		pool[_pairName] += _token1Amount + _token2Amount;
+		poolPair[_pairName][_pair1] += _token1Amount;
+		poolPair[_pairName][_pair2] += _token2Amount;
 		pairs.push(_pairName);
 	}
 
-	function addTokenPair(uint256 _token1Amount, uint256 _token2Amount) public {
+	function addTokenPair(uint256 _token1Amount, uint256 _token2Amount, string memory _pairName, string memory _pair1, string memory _pair2) public {
 		require(_token1Amount > 0 && _token2Amount > 0);
 		token.transferFrom(msg.sender, address(this), _token1Amount);
 		token2.transferFrom(msg.sender, address(this), _token2Amount);
 		liquidity[msg.sender] += _token1Amount + _token2Amount;
 		dexLiquidity += _token1Amount + _token2Amount;
+		pool[_pairName] += _token1Amount + _token2Amount;
+		poolPair[_pairName][_pair1] += _token1Amount;
+		poolPair[_pairName][_pair2] += _token2Amount;
 	}
 }
 
