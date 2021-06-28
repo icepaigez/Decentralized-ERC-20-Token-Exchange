@@ -1,6 +1,7 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 //todos
 //function to issue out LP token based on the provider's pool ownership 
@@ -11,6 +12,9 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 //withdraw from pool
 
 contract TokenSwap {
+
+	using SafeMath for uint256;
+
 	string public name = "TokenSwap DEX";
 	uint256 public dexLiquidity;
 
@@ -85,6 +89,29 @@ contract TokenSwap {
 		poolLiquidity[msg.sender][_pairName] += _token1Amount + _token2Amount;
 		poolPair[_pairName][_pair1] += _token1Amount;
 		poolPair[_pairName][_pair2] += _token2Amount;
+	}
+
+	function tradeEthforToken(string memory _pairName, string memory _pair1, string memory _pair2) public payable returns(uint256) {
+		require(dexLiquidity > 0);
+		uint256 pair1Balance = poolPair[_pairName][_pair1];
+		uint256 pair2Balance = poolPair[_pairName][_pair2];
+		uint256 poolConstant = pair1Balance * pair2Balance;
+		uint256 inputAmount = msg.value;
+		uint256 inputAmountWithFee = inputAmount.mul(997);
+		uint256 pair1BalanceWithFee = pair1Balance.mul(1000);
+		uint256 numerator = poolConstant.mul(1000);
+		uint256 denominator = inputAmountWithFee.add(pair1BalanceWithFee);
+		uint256 postTradePair2Balance = numerator / denominator;
+		uint256 tokenTradeValue = pair2Balance.sub(postTradePair2Balance);
+		token.transfer(msg.sender, tokenTradeValue);
+		poolPair[_pairName][_pair1] += inputAmount;
+		poolPair[_pairName][_pair2] -= tokenTradeValue;
+		uint256 poolBal = pool[_pairName];
+		// pool[_pairName] += inputAmount - tokenTradeValue;
+		poolBal = poolBal.add(inputAmount).sub(tokenTradeValue);
+		// dexLiquidity += inputAmount - tokenTradeValue;
+		dexLiquidity = dexLiquidity.add(inputAmount).sub(tokenTradeValue);
+		return tokenTradeValue;
 	}
 }
 
