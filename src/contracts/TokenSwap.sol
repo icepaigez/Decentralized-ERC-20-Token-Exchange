@@ -103,9 +103,9 @@ contract TokenSwap {
 	function tradeEthforToken(string memory _pairName, string memory _pair1, string memory _pair2) public payable returns(uint256) {
 		uint256 pair1Balance = poolPair[_pairName][_pair1];
 		uint256 pair2Balance = poolPair[_pairName][_pair2];
-		require(pair1Balance > 0 && pair2Balance > 0);
-		uint256 poolConstant = pair1Balance * pair2Balance;
 		uint256 inputAmount = msg.value;
+		require(pair1Balance > msg.value && pair2Balance > 0);
+		uint256 poolConstant = pair1Balance * pair2Balance;
 		uint256 inputAmountWithFee = inputAmount.mul(997);
 		uint256 pair1BalanceWithFee = pair1Balance.mul(1000);
 		uint256 numerator = poolConstant.mul(1000);
@@ -125,9 +125,9 @@ contract TokenSwap {
 	function tradeTokenforEth(uint256 _tokenAmount, string memory _pairName, string memory _pair1, string memory _pair2) public returns(uint256) {
 		uint256 pair1Balance = poolPair[_pairName][_pair1];
 		uint256 pair2Balance = poolPair[_pairName][_pair2];
-		require(pair1Balance > 0 && pair2Balance > 0);
-		uint256 poolConstant = pair1Balance * pair2Balance;
 		uint256 inputAmount = _tokenAmount;
+		require(pair1Balance > 0 && pair2Balance > inputAmount);
+		uint256 poolConstant = pair1Balance * pair2Balance;
 		uint256 inputAmountWithFee = inputAmount.mul(997);
 		uint256 numerator = poolConstant.mul(1000);
 		uint256 denominator = pair2Balance.mul(1000).add(inputAmountWithFee);
@@ -135,6 +135,7 @@ contract TokenSwap {
 		uint256 etherTradeValue = pair1Balance.sub(postTradePair1Balance);
 		require(pair1Balance > etherTradeValue);
 		address payable trader = payable(msg.sender);
+		token.transferFrom(msg.sender, address(this), inputAmount);
 		trader.transfer(etherTradeValue);
 		poolPair[_pairName][_pair1] -= etherTradeValue;
 		poolPair[_pairName][_pair2] += inputAmount;
@@ -143,6 +144,44 @@ contract TokenSwap {
 		dexLiquidity = dexLiquidity.add(inputAmount).sub(etherTradeValue);
 		return etherTradeValue;
 	}
+
+	function tradeTokenforToken(uint256 _tokenAmount, string memory _tradeToken, string memory _pairName, string memory _pair1, string memory _pair2) public returns(uint256) {
+		uint256 pair1Balance = poolPair[_pairName][_pair1];
+		uint256 pair2Balance = poolPair[_pairName][_pair2];
+		uint256 inputAmount = _tokenAmount;
+		uint256 tokenTradeValue;
+		require(pair1Balance > 0 && pair2Balance > 0);
+		uint256 poolConstant = pair1Balance * pair2Balance;
+		uint256 inputAmountWithFee = inputAmount.mul(997);
+		uint256 numerator = poolConstant.mul(1000);
+		if (keccak256(abi.encodePacked(_tradeToken)) == keccak256(abi.encodePacked(_pair1))) {
+			uint256 denominator = pair1Balance.mul(1000).add(inputAmountWithFee);
+			uint256 postTradePairBalance = numerator / denominator;
+			tokenTradeValue = pair2Balance.sub(postTradePairBalance);
+			require(pair2Balance > tokenTradeValue);
+			token.transferFrom(msg.sender, address(this), inputAmount);//assumed that pair1 is token
+			token2.transfer(msg.sender, tokenTradeValue);
+			poolPair[_pairName][_pair1] += inputAmount;
+			poolPair[_pairName][_pair2] -= tokenTradeValue;
+			uint256 poolBal = pool[_pairName];
+			poolBal = poolBal.add(inputAmount).sub(tokenTradeValue);
+			dexLiquidity = dexLiquidity.add(inputAmount).sub(tokenTradeValue);
+		} else {
+			uint256 denominator = pair2Balance.mul(1000).add(inputAmountWithFee);
+			uint256 postTradePairBalance = numerator / denominator;
+			tokenTradeValue = pair1Balance.sub(postTradePairBalance);
+			require(pair1Balance > tokenTradeValue);
+			token2.transferFrom(msg.sender, address(this), inputAmount);//assumed that pair2 is token2
+			token.transfer(msg.sender, tokenTradeValue);
+			poolPair[_pairName][_pair1] -= tokenTradeValue;
+			poolPair[_pairName][_pair2] += inputAmount;
+			uint256 poolBal = pool[_pairName];
+			poolBal = poolBal.add(inputAmount).sub(tokenTradeValue);
+			dexLiquidity = dexLiquidity.add(inputAmount).sub(tokenTradeValue);
+		}
+		return tokenTradeValue;
+	}
+	
 }
 
 
