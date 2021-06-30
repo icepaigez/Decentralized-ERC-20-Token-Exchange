@@ -164,5 +164,29 @@ contract("TokenSwap", accounts => {
 			assert.equal(pair2Liquidity.toString(), tokens('1125.844383287465599199'));
 		})
 	})
+
+	describe('Trade token for a ether from an ETH-Token pool', async() => {
+		let poolName, tok1Symbol, tok2Symbol;
+		before(async() => {
+			tok1Symbol = 'ETH';
+			tok2Symbol = await token1.symbol();
+			poolName = `${tok1Symbol}-${tok2Symbol}`;
+			await token1.transfer(accounts[1], tokens('10000'),{from:accounts[0]});//
+			await token1.approve(dex.address, tokens("500"), {from:accounts[1]});
+			await dex.tradeTokenforEth(tokens("500"), poolName, tok1Symbol, tok2Symbol, {from:accounts[1]});
+		})
+
+		it('should accept ether from the trader and exchange it for a token after deducting a trade fee of 0.3%', async() => {
+			let dexBalance = await dex.dexLiquidity();
+			let poolLiquidity = await dex.pool(poolName);
+			let pair1Liquidity = await dex.poolPair(poolName, tok1Symbol);
+			let pair2Liquidity = await dex.poolPair(poolName, tok2Symbol);
+
+			assert.equal(dexBalance.toString(), tokens('4764.465773538331039492'));
+			assert.equal(poolLiquidity.toString(), tokens('1764.465773538331039492'));
+			assert.equal(pair1Liquidity.toString(), tokens('138.621390250865440293'));
+			assert.equal(pair2Liquidity.toString(), tokens('1625.844383287465599199'));
+		})
+	})
 	
 })  
