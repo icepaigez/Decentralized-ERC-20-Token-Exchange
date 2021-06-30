@@ -107,10 +107,7 @@ contract TokenSwap {
 		require(pair1Balance > msg.value && pair2Balance > 0);
 		uint256 poolConstant = pair1Balance * pair2Balance;
 		uint256 inputAmountWithFee = inputAmount.mul(997);
-		uint256 pair1BalanceWithFee = pair1Balance.mul(1000);
-		uint256 numerator = poolConstant.mul(1000);
-		uint256 denominator = inputAmountWithFee.add(pair1BalanceWithFee);
-		uint256 postTradePair2Balance = numerator / denominator;
+		uint256 postTradePair2Balance = poolConstant.mul(1000) / (inputAmountWithFee.add(pair1Balance.mul(1000)));
 		uint256 tokenTradeValue = pair2Balance.sub(postTradePair2Balance);
 		require(pair2Balance > tokenTradeValue);
 		token.transfer(msg.sender, tokenTradeValue);
@@ -118,6 +115,7 @@ contract TokenSwap {
 		poolPair[_pairName][_pair2] -= tokenTradeValue;
 		uint256 poolBal = pool[_pairName];
 		poolBal = poolBal.add(inputAmount).sub(tokenTradeValue);
+		pool[_pairName] = poolBal;
 		dexLiquidity = dexLiquidity.add(inputAmount).sub(tokenTradeValue);
 		return tokenTradeValue;
 	}

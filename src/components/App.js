@@ -239,7 +239,7 @@ class App extends Component {
   async componentDidMount() {
     await this.loadWeb3()
     //await this.provideETHPairLiquidity('1000', '50')
-    //await this.provideETHPairLiquidity('2', '2.5')
+    //await this.provideTokenPairLiquidity('1000', '500')
     //await this.tradeEth('5')
   }
 
