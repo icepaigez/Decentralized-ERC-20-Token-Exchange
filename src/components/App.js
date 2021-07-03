@@ -227,14 +227,14 @@ class App extends Component {
     }
   }
 
-  tradeEth = async(ethQuantity) => {
-    let { dex, dapp, connectedUser, web3 } = this.state;
-    let symb1 = 'ETH'
-    let symb2 = await dapp.methods.symbol().call();
-    const poolName = `${symb1}-${symb2}`
-    let trade = await dex.methods.tradeEthforToken(poolName, symb1, symb2).send({from:connectedUser, value:web3.utils.toWei(ethQuantity)})
-    console.log(trade)
-  }
+  // tradeEth = async(ethQuantity) => {
+  //   let { dex, dapp, connectedUser, web3 } = this.state;
+  //   let symb1 = 'ETH'
+  //   let symb2 = await dapp.methods.symbol().call();
+  //   const poolName = `${symb1}-${symb2}`
+  //   let trade = await dex.methods.tradeEthforToken(poolName, symb1, symb2).send({from:connectedUser, value:web3.utils.toWei(ethQuantity)})
+  //   console.log(trade)
+  // }
 
   async componentDidMount() {
     await this.loadWeb3()
