@@ -4,6 +4,7 @@ import DAppToken from '../abis/DAppToken.json';
 import TeaToken from '../abis/TeaToken.json';
 import LPToken from '../abis/LPToken.json';
 import TokenSwap from '../abis/TokenSwap.json';
+import Navbar from "./NavBar/NavBar";
 import './App.css';
 
 class App extends Component {
@@ -246,7 +247,7 @@ class App extends Component {
   render() {
     return (
       <div>
-        <h1>ERC20 Dex</h1>
+        <Navbar />
       </div>
     );
   }
