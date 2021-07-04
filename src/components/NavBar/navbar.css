@@ -10,12 +10,17 @@
 	margin: 0 .2em;
 }
 
+.navbar div:nth-child(1) {
+	font-weight: 500;
+	font-size: 1.2em;
+}
+
 .navbar div:nth-child(2) {
 	margin-left: auto;
 }
 
 .navbar:hover {
-	background-color: #343a40;
+	background-color: #20c997;
 }
 
 @media screen and (max-width: 616px) {
