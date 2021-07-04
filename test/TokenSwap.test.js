@@ -398,5 +398,4 @@ contract("TokenSwap", accounts => {
 			assert.equal(newPair2Liquidity.toString(), tokens('10729.945409842897028795'));
 		})
 	})
-	
 })  
