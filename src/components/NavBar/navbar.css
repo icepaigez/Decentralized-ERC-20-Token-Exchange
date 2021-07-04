@@ -1,5 +1,18 @@
 .navbar {
-	border: 1px solid red;
-	padding: 0;
-	margin: 0;
+	background-color: #322348;
+	color: #fff;
+	display: flex;
+	padding: 0.8em 0.5em;
+}
+
+.navbar div {
+	margin: 0 .2em;
+}
+
+.navbar div:nth-child(2) {
+	margin-left: auto;
+}
+
+.navbar:hover {
+	background-color: #343a40;
 }
