@@ -5,6 +5,7 @@ import TeaToken from '../abis/TeaToken.json';
 import LPToken from '../abis/LPToken.json';
 import TokenSwap from '../abis/TokenSwap.json';
 import Navbar from "./NavBar/NavBar";
+import Main from "./Main/Main";
 import './App.css';
 
 class App extends Component {
@@ -249,6 +250,7 @@ class App extends Component {
     return (
       <div>
         <Navbar user={connectedUser}/>
+        <Main />
       </div>
     );
   }
