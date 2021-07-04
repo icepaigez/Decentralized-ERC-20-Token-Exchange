@@ -17,3 +17,13 @@
 .navbar:hover {
 	background-color: #343a40;
 }
+
+@media screen and (max-width: 616px) {
+	.navbar {
+		justify-content: space-between;
+	}
+
+	.navbar div:nth-child(2) {
+		display: none;
+	}
+}
