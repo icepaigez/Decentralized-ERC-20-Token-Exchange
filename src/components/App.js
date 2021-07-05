@@ -248,7 +248,7 @@ class App extends Component {
   render() {
     const { connectedUser } = this.state;
     return (
-      <div>
+      <div className="app">
         <Navbar user={connectedUser}/>
         <Main />
       </div>

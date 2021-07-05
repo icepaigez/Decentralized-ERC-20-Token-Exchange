@@ -1,0 +1,22 @@
+.liquidity {
+	display: flex;
+	height: 100%;
+}
+
+.liquidity div {
+	margin: 1em;
+}
+
+.liquidity div:nth-child(1) {
+	width: 30%;
+	height: 70%;
+	border: 1px solid #d3d3d3;
+	border-radius: 1em;
+}
+
+.liquidity div:nth-child(2) {
+	width: 70%;
+	height: 70%;
+	border: 1px solid #d3d3d3;
+	border-radius: 1em;
+}
