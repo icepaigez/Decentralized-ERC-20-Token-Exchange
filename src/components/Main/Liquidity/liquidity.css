@@ -22,10 +22,15 @@
 .liquidity .pool__pair {
 	border: 1px solid #ced4da;
 	display: flex;
+	align-items: center;
 	margin: 0.7em 0 0.7em 0;
-	padding: 0.7em;
+	padding: 0.5em;
 	border-radius: 0.25em;
 	max-width: 100%;
+}
+
+.pool__pair img {
+	margin-right: 0.2em;
 }
 
 .liquidity .pool__data p, div {
@@ -41,7 +46,36 @@
 .liquidity .pool__liquid {
 	width: 60%;
 	height: 100%;
-	border: 1px solid #ced4da;
 	border-radius: 0.25em;
 	margin-left: 1em;
+	/*padding: 2em;*/
+}
+
+.liquidity__form {
+	border: 1px solid #ced4da;
+	padding: 1.5em;
+	border-radius: 0.25em;
+}
+
+.liquidity__form div {
+	display: flex;
+}
+
+.liquidity__form input {
+	width: 80%;
+	border: 1px solid #ced4da;
+	padding: 1em;
+	border-radius: 0.25em;
+	font-size: 0.9em;
+}
+
+.liquidity__form .pairs {
+	border: 1px solid #ced4da;
+	width: 6em;
+	align-items: center;
+	justify-content: left;
+}
+
+.pairs select {
+	border: transparent;
 }
