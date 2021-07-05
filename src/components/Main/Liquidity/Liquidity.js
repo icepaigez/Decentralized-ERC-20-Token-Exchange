@@ -24,7 +24,7 @@ class Liquidity extends Component {
 				</div>
 				<div className="pool__liquid">
 					<form className="liquidity__form">
-					  <div>
+					  <div className="liquid__inputs">
 					    <input type="text" placeholder="0" name="pool" disabled/>
 					    <div className="pairs">
 					      <select name="pools" id="pools">
@@ -34,21 +34,21 @@ class Liquidity extends Component {
 					      </select>
 					    </div>
 					  </div>
-					  <div>
+					  <div className="liquid__inputs">
 					    <input type="text" name="" placeholder="0"/>
 					    <div className="pairs">
 					       <img src={ethLogo} height='32' alt=""/>
 					        ETH
 					    </div>
 					  </div>
-					  <div>
+					  <div className="liquid__inputs">
 					    <input type="text" name="" placeholder="0"/>
 					    <div className="pairs">
 					       <img src={tokenLogo} height='32' alt=""/>
 					       DApp
 					    </div>
 					  </div>
-					  <button type="submit">Provide Liquidity</button>
+					  <button type="submit">Provide liquidity</button>
 					</form>
 				</div>
 			</div>

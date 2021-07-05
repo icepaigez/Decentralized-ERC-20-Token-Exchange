@@ -57,6 +57,10 @@
 	border-radius: 0.25em;
 }
 
+.liquid__inputs {
+	margin: 0.5em 0 0.5em 0;
+}
+
 .liquidity__form div {
 	display: flex;
 }
@@ -74,8 +78,24 @@
 	width: 6em;
 	align-items: center;
 	justify-content: left;
+	border-radius: 0.25em;
 }
 
 .pairs select {
 	border: transparent;
+	font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+}
+
+.liquidity__form button {
+	font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+	width: 100%;
+	border-radius: 0.25em;
+	padding: 1em;
+	color: #111;
+	background: linear-gradient(to bottom,#f7dfa5,#f0c14b);
+    border-color: #a88734 #9c7e31 #846a29;
+    cursor: pointer;
+    box-shadow: 0 1px 0 rgb(255 255 255 / 40%) inset;
+    border-style: solid;
+    border-width: 1px;
 }
