@@ -3,20 +3,45 @@
 	height: 100%;
 }
 
-.liquidity div {
-	margin: 1em;
+.liquidity {
+	padding: 1em 0.5em;
 }
 
-.liquidity div:nth-child(1) {
-	width: 30%;
-	height: 70%;
-	border: 1px solid #d3d3d3;
-	border-radius: 1em;
+.liquidity .pool__summary {
+	width: 40%;
+	height: 100%;
 }
 
-.liquidity div:nth-child(2) {
-	width: 70%;
-	height: 70%;
-	border: 1px solid #d3d3d3;
-	border-radius: 1em;
+.liquidity .pool__data {
+	border: 1px solid #ced4da;
+	margin: 0.8em 0.8em 0 0.8em;
+	border-radius: 0.25em;
+	padding: 0.5em;
+}
+
+.liquidity .pool__pair {
+	border: 1px solid #ced4da;
+	display: flex;
+	margin: 0.7em 0 0.7em 0;
+	padding: 0.7em;
+	border-radius: 0.25em;
+	max-width: 100%;
+}
+
+.liquidity .pool__data p, div {
+	margin-top: 0;
+	margin-bottom: 0;
+}
+
+.pool__pair .token__value {
+	margin-left: auto;
+}
+
+
+.liquidity .pool__liquid {
+	width: 60%;
+	height: 100%;
+	border: 1px solid #ced4da;
+	border-radius: 0.25em;
+	margin-left: 1em;
 }
