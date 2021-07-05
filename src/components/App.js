@@ -253,17 +253,14 @@ class App extends Component {
 
   async componentDidMount() {
     await this.loadWeb3()
-    //await this.provideETHPairLiquidity('1000', '50')
-    //await this.provideTokenPairLiquidity('1000', '500')
-    //await this.tradeEth('5')
   }
 
   render() {
-    const { connectedUser, pools } = this.state;
+    const { connectedUser, pools, dex, web3 } = this.state;
     return (
       <div className="app">
         <Navbar user={connectedUser}/>
-        <Main pools={pools} ethLiquid={this.provideETHPairLiquidity}/>
+        <Main web3={web3} dex={dex} pools={pools} ethLiquid={this.provideETHPairLiquidity}/>
       </div>
     );
   }

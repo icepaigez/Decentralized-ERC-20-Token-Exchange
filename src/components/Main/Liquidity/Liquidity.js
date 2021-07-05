@@ -11,7 +11,10 @@ class Liquidity extends Component {
 			pairA:'ETH',
 			pairB:'DApp',
 			pairAValue:0,
-			pairBValue:0
+			pairBValue:0,
+			pairABalance:'',
+			pairBBalance:'',
+			poolBalance:''
 		}
 	}
 
@@ -24,6 +27,9 @@ class Liquidity extends Component {
 			this.setState({
 				pairA:selected[0],
 				pairB:selected[1]
+			}, async () => {
+				const { pools } = this.props;
+				await this.getPoolData(pools);
 			})
 		})
 	}
@@ -64,9 +70,47 @@ class Liquidity extends Component {
 		}
 	}
 
+	getPoolData = async array => {
+		const { dex, web3 } = this.props;
+		let { pairA, pairB } = this.state;
+		
+		let pairABalance, pairBBalance, poolBalance;
+		let pool = array.filter(pool => pool.split('-').includes(pairA && pairB))
+		if (pool.length === 1) {
+			poolBalance = await dex.methods.pool(pool[0]).call();
+			pairABalance = await dex.methods.poolPair(pool[0], pairA).call();
+			pairBBalance = await dex.methods.poolPair(pool[0], pairB).call();
+			if (pairABalance !== undefined && pairBBalance !== undefined && poolBalance !== undefined) {
+				pairABalance = web3.utils.fromWei(pairABalance)
+				pairBBalance = web3.utils.fromWei(pairBBalance)
+				poolBalance = web3.utils.fromWei(poolBalance)
+			}
+			this.setState({ pairABalance, pairBBalance, poolBalance })
+		} else {
+			this.setState({
+				pairABalance:"0",
+				pairBBalance: "0",
+				poolBalance: "0"
+			})
+		}
+	}
+
+	async componentDidMount() {
+		const { pools } = this.props;
+		await this.getPoolData(pools);
+	}
+
+	async componentDidUpdate(prevProps) {
+		if (this.props.pools !== prevProps.pools) {
+			const { pools } = this.props;
+			await this.getPoolData(pools);
+		}
+	}
+
 	render() {
 		const { pools } = this.props;
-		const { pairA, pairB, pairAValue, pairBValue } = this.state;
+		const { pairA, pairB, pairAValue, pairBValue, pairABalance, pairBBalance, poolBalance } = this.state;
+		
 		return(
 			<div className="liquidity">
 				<div className="pool__summary">
@@ -75,19 +119,19 @@ class Liquidity extends Component {
 					  <div className="pool__pair">
 					    <img src={pairA === 'ETH' ? ethLogo: tokenLogo} alt="" height='30'/>
 					    <p>{ pairA }</p>
-					    <p className="token__value">{ pools.length === 0 ? 0 : 1000 }</p>
+					    <p className="token__value">{ pools.length === 0 ? 0 : pairABalance }</p>
 					  </div>
 					  <div className="pool__pair">
 					    <img src={pairB === 'ETH' ? ethLogo: tokenLogo} alt="" height='30'/>
 					    <p>{ pairB }</p>
-					    <p className="token__value">{ pools.length === 0 ? 0 : 1000 }</p>
+					    <p className="token__value">{ pools.length === 0 ? 0 : pairBBalance }</p>
 					  </div>
 					</div>
 				</div>
 				<div className="pool__liquid">
 					<form className="liquidity__form" onSubmit={this.acceptLiquidity}>
 					  <div className="liquid__inputs">
-					    <input type="text" placeholder={pools.length === 0 ? 0 : 1000} name="pool" disabled/>
+					    <input type="text" placeholder={pools.length === 0 ? 0 : poolBalance} name="pool" disabled/>
 					    <div className="pairs">
 					      <select name="pools" id="pools" onChange={this.getSelectedPool}>
 					        <option value="ETH-DApp" defaultValue>ETH-DApp</option>
