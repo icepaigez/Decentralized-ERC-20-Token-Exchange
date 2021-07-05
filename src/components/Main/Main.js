@@ -4,9 +4,10 @@ import "./main.css";
 
 class Main extends Component {
 	render() {
+		const { pools, ethLiquid } = this.props;
 		return(
 			<div className="main">
-				<Liquidity />
+				<Liquidity pools={pools} ethLiquid={ethLiquid}/>
 			</div>
 		)
 	}

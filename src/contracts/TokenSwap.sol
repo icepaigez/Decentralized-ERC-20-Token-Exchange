@@ -13,7 +13,7 @@ contract TokenSwap {
 	string public name = "TokenSwap DEX";
 	uint256 public dexLiquidity;
 	address deployer;
-
+ 
 	IERC20 token;
 	IERC20 token2;
 	IERC20 lptoken;
@@ -27,16 +27,13 @@ contract TokenSwap {
 	mapping (string => mapping (string => uint256)) public poolPair; //original liquidity regardless of trade - affected by new liquidity provided
 	mapping (string => mapping (string => uint256)) public newPoolPair; //current post trade liquidity affected by trades
 
+	event LiquidityProvided(address provider, string pair1, uint256 pair1Amount, string pair2, uint256 pair2Amount);
+
 	constructor(address _tokenAddress, address _lptokenAddress, address _token2Address) {
 		token = IERC20(_tokenAddress);
 		lptoken = IERC20(_lptokenAddress);
 		token2 = IERC20(_token2Address);
 		deployer = msg.sender;
-	}
-
-	modifier onlyDeployer() {
-		require(msg.sender == deployer);
-		_;
 	}
 
 	function returnPairs() public view returns(string[] memory) {
@@ -59,6 +56,7 @@ contract TokenSwap {
 		poolPair[_pairName][_pair1] += msg.value;
 		poolPair[_pairName][_pair2] += _tokenAmount;
 		pairs.push(_pairName);
+		emit LiquidityProvided(msg.sender, _pair1, msg.value, _pair2, _tokenAmount);
 	}
 
 	function addEthPair(uint256 _tokenAmount, string memory _pairName, string memory _pair1, string memory _pair2) public payable {
