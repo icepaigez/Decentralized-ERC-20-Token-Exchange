@@ -148,7 +148,7 @@ class App extends Component {
           }
         } else {
           //let symb = await dapp.methods.symbol().call();
-          const poolName = `${symb1}-${symb2}`
+          // const poolName = `${symb1}-${symb2}`
           //const approve = await dapp.methods.approve(dexAddress, web3.utils.toWei(tokenQuantity, 'ether')).send({from:connectedUser})
           const { status } = approve;
           if (status) {

@@ -46,7 +46,11 @@ contract TokenSwap {
 
 	function initEthPair(uint256 _tokenAmount, string memory _pairName, string memory _pair1, string memory _pair2) public payable {
 		require(_tokenAmount > 0);
-		token.transferFrom(msg.sender, address(this), _tokenAmount);
+		if (keccak256(abi.encodePacked(_pair2)) == keccak256(abi.encodePacked('DApp'))) {
+			token.transferFrom(msg.sender, address(this), _tokenAmount);
+		} else {
+			token2.transferFrom(msg.sender, address(this), _tokenAmount);
+		}
 		liquidity[msg.sender] += _tokenAmount + msg.value;
 		dexLiquidity += _tokenAmount + msg.value;
 		pool[_pairName] += _tokenAmount + msg.value;
@@ -61,7 +65,11 @@ contract TokenSwap {
 
 	function addEthPair(uint256 _tokenAmount, string memory _pairName, string memory _pair1, string memory _pair2) public payable {
 		require(_tokenAmount > 0);
-		token.transferFrom(msg.sender, address(this), _tokenAmount);
+		if (keccak256(abi.encodePacked(_pair2)) == keccak256(abi.encodePacked('DApp'))) {
+			token.transferFrom(msg.sender, address(this), _tokenAmount);
+		} else {
+			token2.transferFrom(msg.sender, address(this), _tokenAmount);
+		}
 		liquidity[msg.sender] += _tokenAmount + msg.value;
 		dexLiquidity += _tokenAmount + msg.value;
 		pool[_pairName] += _tokenAmount + msg.value;
@@ -102,6 +110,7 @@ contract TokenSwap {
 	}
 
 	function tradeEthforToken(string memory _pairName, string memory _pair1, string memory _pair2) public payable returns(uint256) {
+		require(pool[_pairName] > 0, "No liquidity exists in this pool");
 		uint256 pair1Balance;
 		uint256 pair2Balance;
 		if (newPoolPair[_pairName][_pair1] == 0 && newPoolPair[_pairName][_pair2] == 0) {
@@ -118,7 +127,11 @@ contract TokenSwap {
 		uint256 postTradePair2Balance = poolConstant.mul(1000) / (inputAmountWithFee.add(pair1Balance.mul(1000)));
 		uint256 tokenTradeValue = pair2Balance.sub(postTradePair2Balance);
 		require(pair2Balance > tokenTradeValue);
-		token.transfer(msg.sender, tokenTradeValue);
+		if (keccak256(abi.encodePacked(_pair2)) == keccak256(abi.encodePacked('DApp'))) {
+			token.transfer(msg.sender, tokenTradeValue);
+		} else {
+			token2.transfer(msg.sender, tokenTradeValue);
+		}
 		newPoolPair[_pairName][_pair1] = pair1Balance.add(inputAmount);
 		newPoolPair[_pairName][_pair2] = pair2Balance.sub(tokenTradeValue);
 		uint256 poolBal = pool[_pairName];
@@ -129,6 +142,7 @@ contract TokenSwap {
 	}
 
 	function tradeTokenforEth(uint256 _tokenAmount, string memory _pairName, string memory _pair1, string memory _pair2) public returns(uint256) {
+		require(pool[_pairName] > 0, "No liquidity exists in this pool");
 		uint256 pair1Balance;
 		uint256 pair2Balance;
 		if (newPoolPair[_pairName][_pair1] == 0 && newPoolPair[_pairName][_pair2] == 0) {
@@ -145,7 +159,11 @@ contract TokenSwap {
 		uint256 etherTradeValue = pair1Balance.sub(postTradePair1Balance);
 		require(pair1Balance > etherTradeValue);
 		address payable trader = payable(msg.sender);
-		token.transferFrom(msg.sender, address(this), inputAmount);
+		if (keccak256(abi.encodePacked(_pair2)) == keccak256(abi.encodePacked('DApp'))) {
+			token.transferFrom(msg.sender, address(this), inputAmount);
+		} else {
+			token2.transferFrom(msg.sender, address(this), inputAmount);
+		}
 		trader.transfer(etherTradeValue);
 		newPoolPair[_pairName][_pair1] = pair1Balance.sub(etherTradeValue);
 		newPoolPair[_pairName][_pair2] = pair2Balance.add(inputAmount);
@@ -157,6 +175,7 @@ contract TokenSwap {
 	}
 
 	function tradeTokenforToken(uint256 _tokenAmount, string memory _tradeToken, string memory _pairName, string memory _pair1, string memory _pair2) public returns(uint256) {
+		require(pool[_pairName] > 0, "No liquidity exists in this pool");
 		uint256 pair1Balance;
 		uint256 pair2Balance;
 		if (newPoolPair[_pairName][_pair1] == 0 && newPoolPair[_pairName][_pair2] == 0) {
