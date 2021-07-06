@@ -78,6 +78,7 @@ contract TokenSwap {
 		poolLiquidity[msg.sender][_pairName][_pair2] += _tokenAmount;
 		poolPair[_pairName][_pair1] += msg.value;
 		poolPair[_pairName][_pair2] += _tokenAmount;
+		emit LiquidityProvided(msg.sender, _pair1, msg.value, _pair2, _tokenAmount);
 	}
 
 	function initTokenPair(uint256 _token1Amount, uint256 _token2Amount, string memory _pairName, string memory _pair1, string memory _pair2) public {
@@ -93,6 +94,7 @@ contract TokenSwap {
 		poolPair[_pairName][_pair1] += _token1Amount;
 		poolPair[_pairName][_pair2] += _token2Amount;
 		pairs.push(_pairName);
+		emit LiquidityProvided(msg.sender, _pair1, _token1Amount, _pair2, _token2Amount);
 	}
 
 	function addTokenPair(uint256 _token1Amount, uint256 _token2Amount, string memory _pairName, string memory _pair1, string memory _pair2) public {
@@ -107,6 +109,7 @@ contract TokenSwap {
 		poolLiquidity[msg.sender][_pairName][_pair2] += _token2Amount;
 		poolPair[_pairName][_pair1] += _token1Amount;
 		poolPair[_pairName][_pair2] += _token2Amount;
+		emit LiquidityProvided(msg.sender, _pair1, _token1Amount, _pair2, _token2Amount);
 	}
 
 	function tradeEthforToken(string memory _pairName, string memory _pair1, string memory _pair2) public payable returns(uint256) {

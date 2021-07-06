@@ -49,24 +49,41 @@ class Liquidity extends Component {
 	acceptLiquidity = async e => {
 		e.preventDefault()
 		const { pairAValue, pairBValue, pairA, pairB } = this.state;
+		const { ethLiquid, tokenLiquid } = this.props
 		if (pairAValue !== 0 && pairBValue !== 0) {
 			if (pairA === 'ETH') {
 				try {
-					const { ethLiquid } = this.props
 					let result = await ethLiquid(pairBValue, pairAValue, pairA, pairB)
+					console.log(result)
 					if (result && result.status) {
 						window.location.reload();
 					}
 				} catch(err) {
-					console.error("Error occurred when providing an ETH-Token Liquidity", err)
+					console.error("Error occurred when providing an ETH-Token Liquidity", err);
+				}
+			} else {
+				try {
+					let result = await tokenLiquid(pairAValue, pairBValue, pairA, pairB)
+					console.log(result)
+					if (result && result.status) {
+						window.location.reload();
+					}
+				} catch(err) {
+					console.error("Error occurred when providing an Token-Token Liquidity", err)
 				}
 			}
+			//clear the form
 			this.setState({
 				pairAValue:0,
 				pairBValue:0
 			})
 		} else {
 			alert('Please enter values for both fields')
+			//clear the form
+			this.setState({
+				pairAValue:0,
+				pairBValue:0
+			})
 		}
 	}
 
@@ -123,7 +140,7 @@ class Liquidity extends Component {
 	render() {
 		const { pools } = this.props;
 		const { pairA, pairB, pairAValue, pairBValue, pairABalance, pairBBalance, poolBalance } = this.state;
-		
+		console.log(pools)
 		return(
 			<div className="liquidity">
 				<div className="pool__summary">
