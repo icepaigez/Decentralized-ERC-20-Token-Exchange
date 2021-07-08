@@ -14,7 +14,8 @@ class Trade extends Component {
 			pairBValue:0,
 			pairABalance:'',
 			pairBBalance:'',
-			poolBalance:''
+			poolBalance:'',
+			tradeToken: 'DApp'
 		}
 	}
 
@@ -30,8 +31,30 @@ class Trade extends Component {
 			}, async () => {
 				const { pools } = this.props;
 				await this.getPoolData(pools);
+
+				//after selecting a token to be traded
+				const { pairA, pairB } = this.state
+				if (![pairA, pairB].includes(this.state.tradeToken)) {
+					this.setState({
+						tradeToken: pairB
+					})
+				}
 			})
 		})
+	}
+
+	getTradeToken = e => {
+		const { pairA, pairB } = this.state
+		let selectedToken = e.target.value
+		if (selectedToken === pairA) {
+			this.setState({
+				tradeToken: pairB
+			})
+		} else {
+			this.setState({
+				tradeToken: pairA
+			})
+		}
 	}
 
 	getPairAValue = e => {
@@ -137,7 +160,7 @@ class Trade extends Component {
 
 	render() {
 		const { pools } = this.props;
-		const { pairA, pairB, pairAValue, pairBValue, pairABalance, pairBBalance, poolBalance } = this.state;
+		const { pairA, pairB, pairAValue, pairBValue, pairABalance, pairBBalance, poolBalance, tradeToken } = this.state;
 		return(
 			<div className="liquidity">
 				<div className="pool__summary">
@@ -169,16 +192,18 @@ class Trade extends Component {
 					  </div>
 					  <div className="liquid__inputs">
 					    <input onChange={this.getPairAValue} type="text" value={pairAValue}/>
-					    <div className="pairs">
-					       <img src={pairA === 'ETH' ? ethLogo : tokenLogo} height='32' alt=""/>
-					        { pairA }
+					    <div className="tokens pairs">
+					       <select name="pools" id="pools" onChange={this.getTradeToken}>
+						      <option value={pairA} defaultValue>{ pairA }</option>
+						      <option value={pairB}>{ pairB }</option>
+					      </select>
 					    </div>
 					  </div>
 					  <div className="liquid__inputs">
-					    <input onChange={this.getPairBValue} type="text" value={pairBValue}/>
+					    <input onChange={this.getPairBValue} type="text" value={pairBValue} disabled/>
 					    <div className="pairs">
-					       <img src={pairB === 'ETH' ? ethLogo : tokenLogo} height='32' alt=""/>
-					       { pairB }
+					       <img src={tradeToken === 'ETH' ? ethLogo : tokenLogo} height='32' alt=""/>
+					       { tradeToken }
 					    </div>
 					  </div>
 					  <button className="trader" type="submit">Trade</button>

@@ -1,3 +1,7 @@
+.liquidity__form .tokens select {
+	margin-left: auto;
+	margin-right: auto;
+}
 .liquidity__form button.trader {
 	background: linear-gradient(to bottom,rgb(239, 239, 239),rgb(239, 239, 239));
 }

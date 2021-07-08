@@ -28,6 +28,7 @@ contract TokenSwap {
 	mapping (string => mapping (string => uint256)) public newPoolPair; //current post trade liquidity affected by trades
 
 	event LiquidityProvided(address provider, string pair1, uint256 pair1Amount, string pair2, uint256 pair2Amount);
+	event Traded(address trader, string pool, uint256 inputAmount, string inputToken, uint256 outputAmount, string outputToken);
 
 	constructor(address _tokenAddress, address _lptokenAddress, address _token2Address) {
 		token = IERC20(_tokenAddress);
@@ -112,7 +113,7 @@ contract TokenSwap {
 		emit LiquidityProvided(msg.sender, _pair1, _token1Amount, _pair2, _token2Amount);
 	}
 
-	function tradeEthforToken(string memory _pairName, string memory _pair1, string memory _pair2) public payable returns(uint256) {
+	function tradeEthforToken(string memory _pairName, string memory _pair1, string memory _pair2) public payable {
 		require(pool[_pairName] > 0, "No liquidity exists in this pool");
 		uint256 pair1Balance;
 		uint256 pair2Balance;
@@ -141,10 +142,10 @@ contract TokenSwap {
 		poolBal = poolBal.add(inputAmount).sub(tokenTradeValue);
 		pool[_pairName] = poolBal;
 		dexLiquidity = dexLiquidity.add(inputAmount).sub(tokenTradeValue);
-		return tokenTradeValue;
+		emit Traded(msg.sender, _pairName, inputAmount, _pair1, tokenTradeValue, _pair2);
 	}
 
-	function tradeTokenforEth(uint256 _tokenAmount, string memory _pairName, string memory _pair1, string memory _pair2) public returns(uint256) {
+	function tradeTokenforEth(uint256 _tokenAmount, string memory _pairName, string memory _pair1, string memory _pair2) public {
 		require(pool[_pairName] > 0, "No liquidity exists in this pool");
 		uint256 pair1Balance;
 		uint256 pair2Balance;
@@ -174,10 +175,10 @@ contract TokenSwap {
 		poolBal = poolBal.add(inputAmount).sub(etherTradeValue);
 		pool[_pairName] = poolBal;
 		dexLiquidity = dexLiquidity.add(inputAmount).sub(etherTradeValue);
-		return etherTradeValue;
+		emit Traded(msg.sender, _pairName, inputAmount, _pair2, etherTradeValue, _pair1);
 	}
 
-	function tradeTokenforToken(uint256 _tokenAmount, string memory _tradeToken, string memory _pairName, string memory _pair1, string memory _pair2) public returns(uint256) {
+	function tradeTokenforToken(uint256 _tokenAmount, string memory _tradeToken, string memory _pairName, string memory _pair1, string memory _pair2) public {
 		require(pool[_pairName] > 0, "No liquidity exists in this pool");
 		uint256 pair1Balance;
 		uint256 pair2Balance;
@@ -213,7 +214,7 @@ contract TokenSwap {
 		poolBal = poolBal.add(inputAmount).sub(tokenTradeValue);
 		pool[_pairName] = poolBal;
 		dexLiquidity = dexLiquidity.add(inputAmount).sub(tokenTradeValue);
-		return tokenTradeValue;
+		emit Traded(msg.sender, _pairName, inputAmount, _tradeToken, tokenTradeValue, _pair2);
 	}
 
 	function withdraw(string memory _pairName, string memory _pair1, uint256 _pair1Amount, uint256 _pair2Amount, string memory _pair2, uint256 check1, uint256 check2) public {
