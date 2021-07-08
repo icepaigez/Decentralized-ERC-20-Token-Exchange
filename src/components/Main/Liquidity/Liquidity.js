@@ -54,7 +54,6 @@ class Liquidity extends Component {
 			if (pairA === 'ETH') {
 				try {
 					let result = await ethLiquid(pairBValue, pairAValue, pairA, pairB)
-					console.log(result)
 					if (result && result.status) {
 						window.location.reload();
 					}
@@ -64,12 +63,11 @@ class Liquidity extends Component {
 			} else {
 				try {
 					let result = await tokenLiquid(pairAValue, pairBValue, pairA, pairB)
-					console.log(result)
 					if (result && result.status) {
 						window.location.reload();
 					}
 				} catch(err) {
-					console.error("Error occurred when providing an Token-Token Liquidity", err)
+					console.error("Error occurred when providing Token-Token Liquidity", err)
 				}
 			}
 			//clear the form
@@ -140,7 +138,6 @@ class Liquidity extends Component {
 	render() {
 		const { pools } = this.props;
 		const { pairA, pairB, pairAValue, pairBValue, pairABalance, pairBBalance, poolBalance } = this.state;
-		console.log(pools)
 		return(
 			<div className="liquidity">
 				<div className="pool__summary">
