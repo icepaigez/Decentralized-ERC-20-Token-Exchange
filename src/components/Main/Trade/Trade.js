@@ -10,13 +10,10 @@ class Trade extends Component {
 			selectedPool: '',
 			pairA:'ETH',
 			pairB:'DApp',
-			pairC:'TEA',
 			pairAValue:0,
-			pairBValue:0,
 			pairABalance:'',
 			pairBBalance:'',
 			poolBalance:'',
-			tradeToken: 'DApp',
 			selectedToken:'ETH',
 			userEth:'',
 			userDApp:'',
@@ -33,7 +30,6 @@ class Trade extends Component {
 			this.setState({
 				pairA:selected[0],
 				pairB:selected[1],
-				tradeToken:selected[1],
 				selectedToken:selected[0]
 			}, async () => {
 				const { pools } = this.props;
@@ -43,18 +39,8 @@ class Trade extends Component {
 	}
 
 	getTradeToken = e => {
-		const { pairA, pairB, tradeToken } = this.state
 		let selectedToken = e.target.value
 		this.setState({ selectedToken })
-		if (selectedToken === pairA && tradeToken !== pairB) {
-			this.setState({
-				tradeToken: pairB,
-			})
-		} else if (selectedToken === pairB && tradeToken !== pairA) {
-			this.setState({
-				tradeToken: pairA,
-			})
-		}
 	}
 
 
@@ -67,22 +53,39 @@ class Trade extends Component {
 	doTrade = async e => {
 		e.preventDefault()
 		const { pairAValue, selectedToken, pairA, pairB } = this.state;
-		const { tradeEth, web3 } = this.props
+		const { tradeEth, tradeTokenForEth, tradeTokens } = this.props
 		if (pairAValue !== 0) {
-			let pool = `${pairA}-${pairB}`
-			if (selectedToken === 'ETH' && pool.includes('ETH')) {
-				let result = await tradeEth(selectedToken, pairB, pairAValue)
-				if (result.status) {
-					let { Traded } = result.events;
-					let { returnValues } = Traded;
-					let output = returnValues.outputAmount;
-					output = web3.utils.fromWei(output)
-					window.location.reload();
+			let pool = [pairA, pairB]
+			if (selectedToken === 'ETH' && pool.includes('ETH')) { 
+				let otherPair = pool.filter(item => item !== selectedToken)
+				let confirmed = window.confirm(`Confirm your trade token: ${selectedToken}`)
+				if (confirmed) {
+					let result = await tradeEth(selectedToken, otherPair[0], pairAValue)
+					if (result.status) {
+						window.location.reload();
+					}
+				} else {
+					alert('Please select the right token you wish to trade')
 				}
 			} else if (selectedToken !== 'ETH' && pool.includes('ETH')) {
-				console.log('lets fuck ahead')
+				let otherPair = pool.filter(item => item !== selectedToken)
+				let confirmed = window.confirm(`Confirm your trade token: ${selectedToken}`)
+				if (confirmed) {
+					let result = await tradeTokenForEth(pairAValue, otherPair[0], selectedToken)
+					if (result.status) {
+						window.location.reload();
+					}
+				} else {
+					alert('Please select the right token you wish to trade')
+				}
 			} else {
-				console.log('lets fuck tokens')
+				let confirmed = window.confirm(`Confirm your trade token: ${selectedToken}`)
+				if (confirmed) {
+					let result = await tradeTokens(pairAValue, selectedToken)
+					if (result.status) {
+						window.location.reload();
+					}
+				}
 			}
 		} else {
 			alert('Please enter quantity of token to be traded')
@@ -163,7 +166,7 @@ class Trade extends Component {
 
 	render() {
 		const { pools } = this.props;
-		const { pairA, pairB, pairC, pairAValue, pairBValue, pairABalance, pairBBalance, poolBalance, tradeToken, userEth, userDApp, userTea } = this.state;
+		const { pairA, pairB, pairAValue, pairABalance, pairBBalance, poolBalance, userEth, userDApp, userTea } = this.state;
 		return(
 			<div className="liquidity">
 				<div className="pool__summary">
@@ -183,19 +186,19 @@ class Trade extends Component {
 					<div className="pool__data">
 					  <p>User Balances</p>
 					  <div className="pool__pair">
-					    <img src={pairA === 'ETH' ? ethLogo: tokenLogo} alt="" height='30'/>
-					    <p>{ pairA }</p>
-					    <p className="token__value">{ pools.length === 0 ? 0 : userEth }</p>
+					    <img src={ethLogo} alt="" height='30'/>
+					    <p>ETH</p>
+					    <p className="token__value">{ userEth }</p>
 					  </div>
 					  <div className="pool__pair">
-					    <img src={pairB === 'ETH' ? ethLogo: tokenLogo} alt="" height='30'/>
-					    <p>{ pairB }</p>
-					    <p className="token__value">{ pools.length === 0 ? 0 : userDApp }</p>
+					    <img src={tokenLogo} alt="" height='30'/>
+					    <p>DApp</p>
+					    <p className="token__value">{ userDApp }</p>
 					  </div>
 					  <div className="pool__pair">
-					    <img src={pairC === 'ETH' ? ethLogo: tokenLogo} alt="" height='30'/>
-					    <p>{ pairC }</p>
-					    <p className="token__value">{ pools.length === 0 ? 0 : userTea }</p>
+					    <img src={tokenLogo} alt="" height='30'/>
+					    <p>TEA</p>
+					    <p className="token__value">{ userTea }</p>
 					  </div>
 					</div>
 				</div>
@@ -218,13 +221,6 @@ class Trade extends Component {
 						      <option id="current" value={pairA}>{ pairA }</option>
 						      <option value={pairB}>{ pairB }</option>
 					      </select>
-					    </div>
-					  </div>
-					  <div className="liquid__inputs">
-					    <input type="text" value={pairBValue} disabled/>
-					    <div className="pairs">
-					       <img src={tradeToken === 'ETH' ? ethLogo : tokenLogo} height='32' alt=""/>
-					       { tradeToken }
 					    </div>
 					  </div>
 					  <button className="trader" type="submit">Trade</button>

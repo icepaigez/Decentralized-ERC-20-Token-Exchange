@@ -237,7 +237,39 @@ class App extends Component {
     return trade
   }
 
-  //tradeTokenForEth
+  tradeTokenForEth = async(tokenQuantity, token1, token2) => {
+    let { dex, connectedUser, web3, dapp, tea, dexAddress } = this.state;
+    const poolName = `${token1}-${token2}`;
+    tokenQuantity = String(tokenQuantity);
+    let approve;
+    if (token2 === 'DApp') {
+      approve = await dapp.methods.approve(dexAddress, web3.utils.toWei(tokenQuantity, 'ether')).send({from:connectedUser})
+    } else {
+      approve = await tea.methods.approve(dexAddress, web3.utils.toWei(tokenQuantity, 'ether')).send({from:connectedUser})
+    }
+    if (approve.status) {
+      let trade = await dex.methods.tradeTokenforEth(web3.utils.toWei(tokenQuantity), poolName, token1, token2).send({from:connectedUser})
+      return trade;
+    }
+  }
+
+  tradeTokens = async(tokenQuantity, tradeToken) => {
+    let { dex, connectedUser, web3, dapp, tea, dexAddress } = this.state;
+    let token1 = 'DApp'
+    let token2 = 'TEA'
+    const poolName = `${token1}-${token2}`;
+    tokenQuantity = String(tokenQuantity);
+    let approve;
+    if (tradeToken === 'DApp') {
+      approve = await dapp.methods.approve(dexAddress, web3.utils.toWei(tokenQuantity, 'ether')).send({from:connectedUser})
+    } else {
+      approve = await tea.methods.approve(dexAddress, web3.utils.toWei(tokenQuantity, 'ether')).send({from:connectedUser})
+    }
+    if (approve.status) {
+      let trade = await dex.methods.tradeTokenforToken(web3.utils.toWei(tokenQuantity), tradeToken, poolName, token1, token2).send({from:connectedUser})
+      return trade;
+    }
+  }
 
   async componentDidMount() {
     await this.loadWeb3()
@@ -248,7 +280,7 @@ class App extends Component {
     return (
       <div className="app">
         <Navbar user={connectedUser}/>
-        <Main dapp={dapp} tea={tea} user={connectedUser} tradeEth={this.tradeEth} tokenLiquid={this.provideTokenPairLiquidity} web3={web3} dex={dex} pools={pools} ethLiquid={this.provideETHPairLiquidity}/>
+        <Main dapp={dapp} tea={tea} user={connectedUser} tradeTokenForEth={this.tradeTokenForEth} tradeEth={this.tradeEth} tradeTokens={this.tradeTokens} tokenLiquid={this.provideTokenPairLiquidity} web3={web3} dex={dex} pools={pools} ethLiquid={this.provideETHPairLiquidity}/>
       </div>
     );
   }

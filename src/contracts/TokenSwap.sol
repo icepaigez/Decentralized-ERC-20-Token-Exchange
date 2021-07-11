@@ -15,7 +15,7 @@ contract TokenSwap {
 	address deployer;
  
 	IERC20 token;
-	IERC20 token2;
+	IERC20 token2; 
 	IERC20 lptoken;
 
 	string[] public pairs;
