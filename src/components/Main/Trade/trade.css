@@ -1,3 +1,26 @@
+.liquidity__form .tokens {
+	justify-content: center;
+}
+
+.liquidity__form .tokens div {
+	border: 1px solid #ced4da;
+	margin: 0 0.2em;
+	border-radius: 0.25em;
+	padding: 0.1em;
+}
+
+.liquidity__form .tokens div.active {
+	background: linear-gradient(to bottom,#f7dfa5,#f0c14b);
+    border-color: #a88734 #9c7e31 #846a29;
+    box-shadow: 0 1px 0 rgb(255 255 255 / 40%) inset;
+    border-style: solid;
+    border-width: 1px;
+}
+
+.liquidity__form .tokens div:hover {
+	cursor: pointer;
+}
+
 .liquidity__form .tokens select {
 	margin-left: auto;
 	margin-right: auto;

@@ -115,7 +115,7 @@ contract TokenSwap {
 
 	function tradeEthforToken(string memory _pairName, string memory _pair1, string memory _pair2) public payable {
 		require(pool[_pairName] > 0, "No liquidity exists in this pool");
-		uint256 pair1Balance;
+		uint256 pair1Balance; 
 		uint256 pair2Balance;
 		if (newPoolPair[_pairName][_pair1] == 0 && newPoolPair[_pairName][_pair2] == 0) {
 			pair1Balance = poolPair[_pairName][_pair1];

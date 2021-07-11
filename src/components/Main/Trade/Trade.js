@@ -15,7 +15,8 @@ class Trade extends Component {
 			pairABalance:'',
 			pairBBalance:'',
 			poolBalance:'',
-			tradeToken: 'DApp'
+			tradeToken: 'DApp',
+			selectedToken:'ETH',
 		}
 	}
 
@@ -27,35 +28,31 @@ class Trade extends Component {
 			selected = selected.split('-')
 			this.setState({
 				pairA:selected[0],
-				pairB:selected[1]
+				pairB:selected[1],
+				tradeToken:selected[1],
+				selectedToken:selected[0]
 			}, async () => {
 				const { pools } = this.props;
 				await this.getPoolData(pools);
-
-				//after selecting a token to be traded
-				const { pairA, pairB } = this.state
-				if (![pairA, pairB].includes(this.state.tradeToken)) {
-					this.setState({
-						tradeToken: pairB
-					})
-				}
 			})
 		})
 	}
 
 	getTradeToken = e => {
-		const { pairA, pairB } = this.state
+		const { pairA, pairB, tradeToken } = this.state
 		let selectedToken = e.target.value
-		if (selectedToken === pairA) {
+		this.setState({ selectedToken })
+		if (selectedToken === pairA && tradeToken !== pairB) {
 			this.setState({
-				tradeToken: pairB
+				tradeToken: pairB,
 			})
-		} else {
+		} else if (selectedToken === pairB && tradeToken !== pairA) {
 			this.setState({
-				tradeToken: pairA
+				tradeToken: pairA,
 			})
 		}
 	}
+
 
 	getPairAValue = e => {
 		this.setState({
@@ -63,49 +60,22 @@ class Trade extends Component {
 		})
 	}
 
-	getPairBValue = e => {
-		this.setState({
-			pairBValue: Number(e.target.value)
-		})
-	}
-
-	acceptLiquidity = async e => {
+	doTrade = async e => {
 		e.preventDefault()
-		const { pairAValue, pairBValue, pairA, pairB } = this.state;
-		const { ethLiquid, tokenLiquid } = this.props
-		if (pairAValue !== 0 && pairBValue !== 0) {
-			if (pairA === 'ETH') {
-				try {
-					let result = await ethLiquid(pairBValue, pairAValue, pairA, pairB)
-					if (result && result.status) {
-						window.location.reload();
-					}
-				} catch(err) {
-					console.error("Error occurred when providing an ETH-Token Liquidity", err);
-				}
-			} else {
-				try {
-					let result = await tokenLiquid(pairAValue, pairBValue, pairA, pairB)
-					if (result && result.status) {
-						window.location.reload();
-					}
-				} catch(err) {
-					console.error("Error occurred when providing Token-Token Liquidity", err)
-				}
-			}
-			//clear the form
-			this.setState({
-				pairAValue:0,
-				pairBValue:0
-			})
+		const { pairAValue, selectedToken, pairA, pairB } = this.state;
+		const { tradeEth } = this.props
+		if (pairAValue !== 0) {
+			let pool = `${pairA}-${pairB}`
+			console.log({pool, selectedToken, pairAValue})
 		} else {
-			alert('Please enter values for both fields')
-			//clear the form
-			this.setState({
-				pairAValue:0,
-				pairBValue:0
-			})
+			alert('Please enter quantity of token to be traded')
 		}
+		
+		//if (tradeToken === 'ETH' && [pairA, pairB].includes('ETH'))
+		
+		this.setState({
+			pairAValue:0
+		})
 	}
 
 	getPoolData = async array => {
@@ -179,7 +149,7 @@ class Trade extends Component {
 					</div>
 				</div>
 				<div className="pool__liquid">
-					<form className="liquidity__form" onSubmit={this.acceptLiquidity}>
+					<form className="liquidity__form" onSubmit={this.doTrade}>
 					  <div className="liquid__inputs">
 					    <input type="text" placeholder={pools.length === 0 ? 0 : poolBalance} name="pool" disabled/>
 					    <div className="pairs">
@@ -193,14 +163,14 @@ class Trade extends Component {
 					  <div className="liquid__inputs">
 					    <input onChange={this.getPairAValue} type="text" value={pairAValue}/>
 					    <div className="tokens pairs">
-					       <select name="pools" id="pools" onChange={this.getTradeToken}>
-						      <option value={pairA} defaultValue>{ pairA }</option>
+					       <select name="pools" id="pools" defaultValue={pairA} onChange={this.getTradeToken}>
+						      <option id="current" value={pairA}>{ pairA }</option>
 						      <option value={pairB}>{ pairB }</option>
 					      </select>
 					    </div>
 					  </div>
 					  <div className="liquid__inputs">
-					    <input onChange={this.getPairBValue} type="text" value={pairBValue} disabled/>
+					    <input type="text" value={pairBValue} disabled/>
 					    <div className="pairs">
 					       <img src={tradeToken === 'ETH' ? ethLogo : tokenLogo} height='32' alt=""/>
 					       { tradeToken }
