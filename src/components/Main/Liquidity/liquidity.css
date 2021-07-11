@@ -99,3 +99,33 @@
     border-width: 1px;
 }
 
+@media screen and (max-width: 720px) {
+	.liquidity {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		height: 100%;
+	}
+
+	.liquidity .pool__summary {
+		width: 100%;
+		display: flex;
+	}
+
+	.liquidity .pool__summary .pool__data {
+		width: 100%;
+	}
+}
+
+@media screen and (max-width: 643px) {
+
+	.liquidity .pool__summary {
+		flex-direction: column;
+	}
+
+	.liquidity .pool__liquid  {
+		margin-top: 5em;
+		width: 100%;
+	}
+}
+
