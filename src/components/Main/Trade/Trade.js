@@ -102,9 +102,9 @@ class Trade extends Component {
 				newABalance = web3.utils.fromWei(newABalance)
 				newBBalance = web3.utils.fromWei(newBBalance)
 				poolBalance = web3.utils.fromWei(poolBalance)
-				if ((Number(newABalance) > Number(oldABalance)) && (Number(newBBalance) > Number(oldBBalance))) {
-					pairABalance = newABalance;
-					pairBBalance = newBBalance;
+				if ((Number(newABalance) > 0) && (Number(newBBalance) > 0)) {
+					pairABalance = Number(newABalance).toFixed(3);
+					pairBBalance = Number(newBBalance).toFixed(3);
 					this.setState({ pairABalance, pairBBalance, poolBalance })
 				} else {
 					pairABalance = oldABalance;
