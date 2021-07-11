@@ -66,12 +66,17 @@ class Trade extends Component {
 		const { tradeEth } = this.props
 		if (pairAValue !== 0) {
 			let pool = `${pairA}-${pairB}`
-			console.log({pool, selectedToken, pairAValue})
+			if (selectedToken === 'ETH' && pool.includes('ETH')) {
+				let result = await tradeEth(selectedToken, pairB, pairAValue)
+				console.log(result)
+			} else if (selectedToken !== 'ETH' && pool.includes('ETH')) {
+				console.log('lets fuck ahead')
+			} else {
+				console.log('lets fuck tokens')
+			}
 		} else {
 			alert('Please enter quantity of token to be traded')
 		}
-		
-		//if (tradeToken === 'ETH' && [pairA, pairB].includes('ETH'))
 		
 		this.setState({
 			pairAValue:0

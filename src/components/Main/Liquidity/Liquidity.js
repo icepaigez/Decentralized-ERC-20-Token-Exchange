@@ -91,22 +91,22 @@ class Liquidity extends Component {
 		
 		let pairABalance, pairBBalance, poolBalance;
 		let pool = array.filter(pool => (pool.split('-').includes(pairA) && pool.split('-').includes(pairB)))
+
 		if (pool.length === 1) {
 			poolBalance = await dex.methods.pool(pool[0]).call();
 			let oldABalance = await dex.methods.poolPair(pool[0], pairA).call();
 			let oldBBalance = await dex.methods.poolPair(pool[0], pairB).call();
 			let newABalance = await dex.methods.newPoolPair(pool[0], pairA).call();
 			let newBBalance = await dex.methods.newPoolPair(pool[0], pairB).call();
-			
 			if (newABalance !== undefined && newBBalance !== undefined && oldABalance !== undefined && oldBBalance !== undefined && poolBalance !== undefined) {
 				oldABalance = web3.utils.fromWei(oldABalance)
 				oldBBalance = web3.utils.fromWei(oldBBalance)
 				newABalance = web3.utils.fromWei(newABalance)
 				newBBalance = web3.utils.fromWei(newBBalance)
 				poolBalance = web3.utils.fromWei(poolBalance)
-				if ((Number(newABalance) > Number(oldABalance)) && (Number(newBBalance) > Number(oldBBalance))) {
-					pairABalance = newABalance;
-					pairBBalance = newBBalance;
+				if ((Number(newABalance) > 0) && (Number(newBBalance) > 0)) {
+					pairABalance = Number(newABalance).toFixed(3);
+					pairBBalance = Number(newBBalance).toFixed(3);
 					this.setState({ pairABalance, pairBBalance, poolBalance })
 				} else {
 					pairABalance = oldABalance;
