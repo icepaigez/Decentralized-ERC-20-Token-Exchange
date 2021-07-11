@@ -244,11 +244,11 @@ class App extends Component {
   }
 
   render() {
-    const { connectedUser, pools, dex, web3 } = this.state;
+    const { connectedUser, pools, dex, web3, dapp, tea } = this.state;
     return (
       <div className="app">
         <Navbar user={connectedUser}/>
-        <Main user={connectedUser} tradeEth={this.tradeEth} tokenLiquid={this.provideTokenPairLiquidity} web3={web3} dex={dex} pools={pools} ethLiquid={this.provideETHPairLiquidity}/>
+        <Main dapp={dapp} tea={tea} user={connectedUser} tradeEth={this.tradeEth} tokenLiquid={this.provideTokenPairLiquidity} web3={web3} dex={dex} pools={pools} ethLiquid={this.provideETHPairLiquidity}/>
       </div>
     );
   }

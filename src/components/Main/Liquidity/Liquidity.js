@@ -128,11 +128,18 @@ class Liquidity extends Component {
 	}
 
 	getUserData = async () => {
-		const { user, web3 } = this.props;
+		const { user, web3, dapp, tea } = this.props;
 		if (user) {
 			let userEth = await web3.eth.getBalance(user);
 			userEth = web3.utils.fromWei(userEth);
-			this.setState({ userEth })
+
+			let userDApp = await dapp.methods.balanceOf(user).call();
+			userDApp = web3.utils.fromWei(userDApp);
+			
+			let userTea = await tea.methods.balanceOf(user).call();
+			userTea = web3.utils.fromWei(userTea);
+
+			this.setState({ userEth, userDApp, userTea });
 		}
 	}
 
@@ -152,7 +159,7 @@ class Liquidity extends Component {
 
 	render() {
 		const { pools } = this.props;
-		const { pairA, pairB, pairC, pairAValue, pairBValue, pairABalance, pairBBalance, poolBalance, userEth } = this.state;
+		const { pairA, pairB, pairC, pairAValue, pairBValue, pairABalance, pairBBalance, poolBalance, userEth, userDApp, userTea } = this.state;
 		return(
 			<div className="liquidity">
 				<div className="pool__summary">
@@ -179,12 +186,12 @@ class Liquidity extends Component {
 					  <div className="pool__pair">
 					    <img src={pairB === 'ETH' ? ethLogo: tokenLogo} alt="" height='30'/>
 					    <p>{ pairB }</p>
-					    <p className="token__value">{ pools.length === 0 ? 0 : pairBBalance }</p>
+					    <p className="token__value">{ pools.length === 0 ? 0 : userDApp }</p>
 					  </div>
 					  <div className="pool__pair">
 					    <img src={pairC === 'ETH' ? ethLogo: tokenLogo} alt="" height='30'/>
 					    <p>{ pairC }</p>
-					    <p className="token__value">{ pools.length === 0 ? 0 : pairBBalance }</p>
+					    <p className="token__value">{ pools.length === 0 ? 0 : userTea }</p>
 					  </div>
 					</div>
 				</div>
