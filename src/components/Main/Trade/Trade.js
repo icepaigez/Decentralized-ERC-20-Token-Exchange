@@ -63,12 +63,18 @@ class Trade extends Component {
 	doTrade = async e => {
 		e.preventDefault()
 		const { pairAValue, selectedToken, pairA, pairB } = this.state;
-		const { tradeEth } = this.props
+		const { tradeEth, web3 } = this.props
 		if (pairAValue !== 0) {
 			let pool = `${pairA}-${pairB}`
 			if (selectedToken === 'ETH' && pool.includes('ETH')) {
 				let result = await tradeEth(selectedToken, pairB, pairAValue)
-				console.log(result)
+				if (result.status) {
+					let { Traded } = result.events;
+					let { returnValues } = Traded;
+					let output = returnValues.outputAmount;
+					output = web3.utils.fromWei(output)
+					window.location.reload();
+				}
 			} else if (selectedToken !== 'ETH' && pool.includes('ETH')) {
 				console.log('lets fuck ahead')
 			} else {
