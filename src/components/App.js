@@ -248,7 +248,7 @@ class App extends Component {
     return (
       <div className="app">
         <Navbar user={connectedUser}/>
-        <Main tradeEth={this.tradeEth} tokenLiquid={this.provideTokenPairLiquidity} web3={web3} dex={dex} pools={pools} ethLiquid={this.provideETHPairLiquidity}/>
+        <Main user={connectedUser} tradeEth={this.tradeEth} tokenLiquid={this.provideTokenPairLiquidity} web3={web3} dex={dex} pools={pools} ethLiquid={this.provideETHPairLiquidity}/>
       </div>
     );
   }

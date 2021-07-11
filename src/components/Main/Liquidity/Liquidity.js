@@ -10,11 +10,15 @@ class Liquidity extends Component {
 			selectedPool: '',
 			pairA:'ETH',
 			pairB:'DApp',
+			pairC: 'TEA',
 			pairAValue:0,
 			pairBValue:0,
 			pairABalance:'',
 			pairBBalance:'',
-			poolBalance:''
+			poolBalance:'',
+			userEth:'',
+			userDApp:'',
+			userTea:''
 		}
 	}
 
@@ -123,21 +127,32 @@ class Liquidity extends Component {
 		}
 	}
 
+	getUserData = async () => {
+		const { user, web3 } = this.props;
+		if (user) {
+			let userEth = await web3.eth.getBalance(user);
+			userEth = web3.utils.fromWei(userEth);
+			this.setState({ userEth })
+		}
+	}
+
 	async componentDidMount() {
 		const { pools } = this.props;
 		await this.getPoolData(pools);
+		await this.getUserData();
 	}
 
 	async componentDidUpdate(prevProps) {
 		if (this.props.pools !== prevProps.pools) {
 			const { pools } = this.props;
 			await this.getPoolData(pools);
+			await this.getUserData();
 		}
 	}
 
 	render() {
 		const { pools } = this.props;
-		const { pairA, pairB, pairAValue, pairBValue, pairABalance, pairBBalance, poolBalance } = this.state;
+		const { pairA, pairB, pairC, pairAValue, pairBValue, pairABalance, pairBBalance, poolBalance, userEth } = this.state;
 		return(
 			<div className="liquidity">
 				<div className="pool__summary">
@@ -151,6 +166,24 @@ class Liquidity extends Component {
 					  <div className="pool__pair">
 					    <img src={pairB === 'ETH' ? ethLogo: tokenLogo} alt="" height='30'/>
 					    <p>{ pairB }</p>
+					    <p className="token__value">{ pools.length === 0 ? 0 : pairBBalance }</p>
+					  </div>
+					</div>
+					<div className="pool__data">
+					  <p>User Balances</p>
+					  <div className="pool__pair">
+					    <img src={pairA === 'ETH' ? ethLogo: tokenLogo} alt="" height='30'/>
+					    <p>{ pairA }</p>
+					    <p className="token__value">{ pools.length === 0 ? 0 : userEth }</p>
+					  </div>
+					  <div className="pool__pair">
+					    <img src={pairB === 'ETH' ? ethLogo: tokenLogo} alt="" height='30'/>
+					    <p>{ pairB }</p>
+					    <p className="token__value">{ pools.length === 0 ? 0 : pairBBalance }</p>
+					  </div>
+					  <div className="pool__pair">
+					    <img src={pairC === 'ETH' ? ethLogo: tokenLogo} alt="" height='30'/>
+					    <p>{ pairC }</p>
 					    <p className="token__value">{ pools.length === 0 ? 0 : pairBBalance }</p>
 					  </div>
 					</div>
