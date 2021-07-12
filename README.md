@@ -15,7 +15,7 @@
 This is a DEX similar to the Uniswap model - liquidity providers (LP) can provide liquidity to the exchange smart contract and trades can be done against the funds in the pool for a fee that is disbursed to the LP based on their ownership in the pool. The LP can also make part of full withdrawals of funds from the pool plus the fee earned from trading.  
 
 ## Screenshot
-![Example screenshot](./img/screenshot.gif)
+![Example screenshot](./img/dex.gif)
 
 ## Technologies
 * [Solidity](https://docs.soliditylang.org/en/v0.8.4/) - v0.8.0
