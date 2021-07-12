@@ -63,7 +63,6 @@ List of features ready and TODOs for future development
 
 To-do list:
 * Add functionality to create new liquidity pools
-* 
 
 ## Status
 Project is: _in progress_, more features being developed.
