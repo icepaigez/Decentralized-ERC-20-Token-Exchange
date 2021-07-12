@@ -131,12 +131,15 @@ class Liquidity extends Component {
 		if (user) {
 			let userEth = await web3.eth.getBalance(user);
 			userEth = web3.utils.fromWei(userEth);
+			userEth = Number(userEth).toFixed(3);
 
 			let userDApp = await dapp.methods.balanceOf(user).call();
 			userDApp = web3.utils.fromWei(userDApp);
+			userDApp = Number(userDApp).toFixed(3);
 			
 			let userTea = await tea.methods.balanceOf(user).call();
 			userTea = web3.utils.fromWei(userTea);
+			userTea = Number(userTea).toFixed(3);
 
 			this.setState({ userEth, userDApp, userTea });
 		}
