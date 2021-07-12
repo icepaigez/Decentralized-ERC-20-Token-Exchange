@@ -99,7 +99,7 @@
     border-width: 1px;
 }
 
-@media screen and (max-width: 720px) {
+@media screen and (max-width: 799px) {
 	.liquidity {
 		display: flex;
 		flex-direction: column;
@@ -108,7 +108,7 @@
 	}
 
 	.liquidity .pool__liquid  {
-		margin-top: 5em;
+		/*margin-top: 5em;*/
 		width: 100%;
 	}
 
@@ -130,7 +130,7 @@
 	}
 
 	.liquidity .pool__liquid  {
-		margin-top: 5em;
+		/*margin-top: 5em;*/
 		width: 100%;
 	}
 }

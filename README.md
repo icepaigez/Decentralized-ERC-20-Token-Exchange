@@ -49,7 +49,7 @@ To setup this project (on a Windows machine):
 ## Setup
 <!-- Show examples of usage: -->
 To run this project, install it locally using npm:  
-`git clone https://github.com/icepaigez/CryptoExchange.git project-name`  
+`git clone https://github.com/icepaigez/Decentralized-ERC-20-Token-Exchange.git project-name`  
 `cd project-name`  
 `npm install`   
 `truffle migrate`  
@@ -59,6 +59,7 @@ To run this project, install it locally using npm:
 List of features ready and TODOs for future development
 * Provide Liquidity to a pool
 * Make trades against available pools
+* Withdraw from a pool
 
 
 To-do list:
