@@ -3,7 +3,7 @@ const TeaToken = artifacts.require("TeaToken");
 const LPToken = artifacts.require("LPToken");
 const TokenSwap = artifacts.require("TokenSwap");
 
-
+ 
 
 module.exports = async function(deployer) {
   await deployer.deploy(DAppToken);
