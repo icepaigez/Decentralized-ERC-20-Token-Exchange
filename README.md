@@ -16,7 +16,7 @@ This is a basic DEX - liquidity providers (LP) can provide liquidity to the exch
 
 ## Contracts
 You can view the deployed DEX contract at the Kovan etherscan address below:
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dex >> [TokenSwap](https://kovan.etherscan.io/address/0x24643F91363114991DfbC7Cb95314FA75a00f837#contracts)
+* Dex >> [TokenSwap](https://kovan.etherscan.io/address/0x24643F91363114991DfbC7Cb95314FA75a00f837#contracts)
 
 ## Technologies
 * [Solidity](https://docs.soliditylang.org/en/v0.8.4/) - v0.8.0
