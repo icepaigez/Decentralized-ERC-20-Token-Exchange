@@ -3,7 +3,7 @@
 
 ## Table of contents
 * [General info](#general-info)
-* [Contracts](#screenshots)
+* [Contracts](#contracts)
 * [Technologies](#technologies)
 * [Setup](#setup)
 * [Features](#features)
