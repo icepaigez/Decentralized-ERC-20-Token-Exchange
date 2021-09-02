@@ -15,8 +15,11 @@
 This is a basic DEX - liquidity providers (LP) can provide liquidity to the exchange smart contract and trades can be done against the funds in the pool for a fee that is disbursed to the LP based on their ownership in the pool. The LP can also make part or full withdrawals of funds from the pool plus the fee earned from trading.  
 
 ## Contracts
-You can view the deployed DEX contract at the Kovan etherscan address below:
-* Dex >> [TokenSwap](https://kovan.etherscan.io/address/0x24643F91363114991DfbC7Cb95314FA75a00f837#contracts)
+You can view the deployed DEX and token contracts at the Kovan etherscan addresses below:
+* Dex - [TokenSwap](https://kovan.etherscan.io/address/0x24643F91363114991DfbC7Cb95314FA75a00f837#contracts)
+* Token 1 - [DAppToken](https://kovan.etherscan.io/address/0x5e46B11Cd48977794AF6EfB8f5f5f79B8a2490A2#contracts)
+* Token 2 - [TeaToken]( https://kovan.etherscan.io/address/0xA35E36AB728f39538954d795EE5F946E543Ddf5c#contracts)
+* Token 3 - [LPToken](https://kovan.etherscan.io/address/0x2bc07C3e5C5CC0b1e2416df3CED3eD9D9B19F3a0#contracts)
 
 ## Technologies
 * [Solidity](https://docs.soliditylang.org/en/v0.8.4/) - v0.8.0
