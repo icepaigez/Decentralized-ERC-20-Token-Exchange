@@ -64,11 +64,11 @@ List of features ready and TODOs for future development
 * Provide Liquidity to a pool
 * Make trades against available pools
 * Withdraw from a pool
-* Create a way for people to buy the native tokens that can be staked on the DEX i.e swapped with Ether
 
 
 To-do list:
 * Add functionality to create new liquidity pools
+* Create a way for people to buy the native tokens that can be staked on the DEX i.e swapped with Ether
 
 ## Status
 Project is: _in progress_, more features being developed.
