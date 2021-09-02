@@ -139,6 +139,7 @@ class Trade extends Component {
 		if (user) {
 			let userEth = await web3.eth.getBalance(user);
 			userEth = web3.utils.fromWei(userEth);
+			userEth = Number(userEth).toFixed(3);
 
 			let userDApp = await dapp.methods.balanceOf(user).call();
 			userDApp = web3.utils.fromWei(userDApp);
@@ -148,8 +149,8 @@ class Trade extends Component {
 
 			this.setState({ userEth, userDApp, userTea });
 		}
-	}
-
+	} 
+ 
 	async componentDidMount() {
 		const { pools } = this.props;
 		await this.getPoolData(pools);

@@ -45,4 +45,4 @@ module.exports = {
     etherscan: etherscanToken
   }
 }
-//truffle run verify Contract --network kovan : to verify the smart contracts on etherscan
+//truffle run verify ContractName --network kovan : to verify the smart contracts on etherscan
