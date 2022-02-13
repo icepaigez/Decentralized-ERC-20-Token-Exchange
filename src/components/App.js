@@ -235,7 +235,7 @@ class App extends Component {
     ethQuantity = String(ethQuantity);
     let trade = await dex.methods.tradeEthforToken(poolName, token1, token2).send({from:connectedUser, value:web3.utils.toWei(ethQuantity)});
     return trade
-  }
+  } 
 
   tradeTokenForEth = async(tokenQuantity, token1, token2) => {
     let { dex, connectedUser, web3, dapp, tea, dexAddress } = this.state;

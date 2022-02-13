@@ -61,7 +61,7 @@ class Trade extends Component {
 				let confirmed = window.confirm(`Confirm your trade token: ${selectedToken}`)
 				if (confirmed) {
 					let result = await tradeEth(selectedToken, otherPair[0], pairAValue)
-					if (result.status) {
+					if (result.status) { 
 						window.location.reload();
 					}
 				} else {
